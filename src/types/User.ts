@@ -18,3 +18,10 @@ export type UserLoginResponse = Omit<
   IUser,
   "createdAt" | "roleId" | "roleLabel" | "isUse"
 >;
+
+export type UserInfoResponse = Omit<IUser, "accessToken" | "refreshToken">;
+
+export type UserSilentRefreshResponse = Pick<
+  IUser,
+  "accessToken" | "refreshToken" | "success" | "code" | "message"
+>;

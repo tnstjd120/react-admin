@@ -2,15 +2,12 @@ import { Box, Card, Divider, Grid } from "@mui/material";
 import { styled } from "@mui/system";
 
 import LoginForm from "./LoginForm";
-import { Logo } from "@/components/Logo";
-import { useAuthStore } from "@/auth/useAuthStore";
+import { Logo } from "@/components/base/Logo";
 
-const Login = () => {
-  const user = useAuthStore((state) => state.user);
+const LoginPage = () => {
+  // const user = useAuthStore((state) => state.user);
   return (
     <LoginWrapper>
-      {user?.userId} <br />
-      {user?.userName}
       <Grid justifyContent="center" spacing={0} container>
         <Grid
           item
@@ -39,7 +36,7 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginPage;
 
 const LoginWrapper = styled(Box)`
   position: relative;

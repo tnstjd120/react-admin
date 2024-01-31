@@ -1,15 +1,9 @@
-import { useAuthStore } from "@/auth/useAuthStore";
-
-const Home = () => {
-  const user = useAuthStore((state) => state.user);
-
+const HomePage = () => {
   return (
     <div>
-      <h2>HOME</h2>
-      {user?.userId} <br />
-      {user?.userName}
+      <h2>HomePage</h2>
     </div>
   );
 };
 
-export default Home;
+export default HomePage;

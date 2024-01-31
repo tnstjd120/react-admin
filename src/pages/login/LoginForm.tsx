@@ -1,4 +1,3 @@
-import { useAuthStore } from "@/auth/useAuthStore";
 import { CustomFormLabel } from "@/components/form/CustomFormLabel";
 import {
   Box,
@@ -9,21 +8,18 @@ import {
   Stack,
   TextField,
   Typography,
-  styled,
 } from "@mui/material";
 import { ChangeEventHandler, FormEventHandler, useState } from "react";
 import { Link } from "react-router-dom";
 
-import axios, { AxiosError, AxiosResponse } from "axios";
-import theme from "@/utils/theme";
-import { grey } from "@mui/material/colors";
+import axios, { AxiosError } from "axios";
+import { useUserState } from "@/store/userStore";
+import { setCookie } from "@/utils/cookie";
 
 const LoginForm = () => {
   const [helperText, setHelperText] = useState("");
   const [userId, setUserId] = useState("");
   const [userPassword, setUserPassword] = useState("");
-
-  const login = useAuthStore((state) => state.login);
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
@@ -31,7 +27,7 @@ const LoginForm = () => {
 
     try {
       const response = await axios(
-        `${import.meta.env.VITE_APP_API_URL}/api/users/login`,
+        `${import.meta.env.VITE_APP_BASE_URL}/api/users/login`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -43,9 +39,14 @@ const LoginForm = () => {
 
       console.log(response);
 
-      if (response.status !== 200) setHelperText(response.data.message);
+      if (response.status !== 200) return setHelperText(response.data.message);
 
-      login(response.data);
+      const { accessToken, refreshToken, ...rest } = response.data;
+      setCookie("accessToken", accessToken);
+      setCookie("refreshToken", refreshToken);
+
+      const setUserInfo = useUserState((state) => state.setUserInfo);
+      setUserInfo(rest);
     } catch (error) {
       if (axios.isAxiosError<{ message: string }>(error)) {
         const serverError = error as AxiosError<{ message: string }>;
