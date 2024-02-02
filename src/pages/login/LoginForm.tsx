@@ -10,43 +10,54 @@ import {
   Typography,
 } from "@mui/material";
 import { ChangeEventHandler, FormEventHandler, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import axios, { AxiosError } from "axios";
-import { useUserState } from "@/store/userStore";
+import { useUserState } from "@/store/useUserState";
 import { setCookie } from "@/utils/cookie";
+import { API_PATH } from "@/api/API_PATH";
 
 const LoginForm = () => {
   const [helperText, setHelperText] = useState("");
   const [userId, setUserId] = useState("");
   const [userPassword, setUserPassword] = useState("");
 
+  const navigate = useNavigate();
+  const setUserInfo = useUserState((state) => state.setUserInfo);
+
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     setHelperText("");
 
     try {
-      const response = await axios(
-        `${import.meta.env.VITE_APP_BASE_URL}/api/users/login`,
+      const { PATH, METHOD } = API_PATH.USERS.LOGIN;
+
+      const response = await fetch(
+        `${import.meta.env.VITE_APP_BASE_URL}${PATH}`,
         {
           headers: {
             "Content-Type": "application/json",
           },
-          method: "POST",
-          data: { userId: userId, userPassword: userPassword },
+          method: METHOD.method,
+          body: JSON.stringify({ userId: userId, userPassword: userPassword }),
         }
       );
 
-      console.log(response);
+      const json = await response.json();
 
-      if (response.status !== 200) return setHelperText(response.data.message);
+      if (!response.ok) {
+        setHelperText(json.message);
+        return;
+      }
 
-      const { accessToken, refreshToken, ...rest } = response.data;
+      const { accessToken, refreshToken, ...rest } = json;
       setCookie("accessToken", accessToken);
       setCookie("refreshToken", refreshToken);
+      setCookie("userId", rest.userId);
 
-      const setUserInfo = useUserState((state) => state.setUserInfo);
       setUserInfo(rest);
+
+      navigate("/");
     } catch (error) {
       if (axios.isAxiosError<{ message: string }>(error)) {
         const serverError = error as AxiosError<{ message: string }>;

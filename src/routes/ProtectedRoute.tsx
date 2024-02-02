@@ -1,15 +1,35 @@
-import Layout from "@/components/base/Layout";
+import { checkAuth } from "@/auth/checkAuth";
+import Layout from "@/components/common/Layout";
+import { useUserState } from "@/store/useUserState";
+import { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 
-type Props = { isAuth: boolean };
+export const ProtectedRoute = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const { user, setUserInfo } = useUserState((state) => state);
 
-export const ProtectedRoute = ({ isAuth }: Props) => {
-  // const setUserInfo =
+  useEffect(() => {
+    const authenticated = async () => {
+      const authResponse = await checkAuth();
 
-  // api.get("/api/users/personalInfo").then((response) => {});
-  // TODO: accessToken 만료 검증 로직 구현 해야함.
+      const { isAuth, userInfo } = authResponse;
+      console.log("ProtectedRoute authResponse => ", authResponse);
+      console.log("ProtectedRoute isAuthenticated => ", isAuthenticated);
+      setIsAuthenticated(isAuth);
+      if (userInfo) {
+        console.log("isAuth => ", isAuth);
+        setUserInfo({ ...user, ...userInfo });
+      }
+    };
 
-  return isAuth ? (
+    authenticated();
+  }, []);
+
+  if (isAuthenticated === null) {
+    return <div>Loading...</div>;
+  }
+
+  return isAuthenticated ? (
     <Layout>
       <Outlet />
     </Layout>

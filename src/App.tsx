@@ -1,29 +1,24 @@
-import "@fontsource/roboto/300.css";
-import "@fontsource/roboto/400.css";
-import "@fontsource/roboto/500.css";
-import "@fontsource/roboto/700.css";
 import "./styles/global.css";
 
 import { Route, Routes } from "react-router-dom";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
-import { ThemeProvider } from "@mui/material";
-import theme from "./utils/theme";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 import useLocationChange from "./hooks/useLocationChange";
 import ObjectRoute from "./routes/ObjectRoute";
-import { checkAuth } from "./auth/auth";
+import { ThemeSettings } from "./utils/theme/Theme";
 
 function App() {
+  const theme = ThemeSettings();
+
   useLocationChange((location) => {
     console.log(location);
-    checkAuth();
-
-    console.log(checkAuth());
   });
 
   return (
     <ThemeProvider theme={theme}>
+      <CssBaseline />
       <Routes>
-        <Route element={<ProtectedRoute isAuth={false} />}>
+        <Route element={<ProtectedRoute />}>
           {Object.entries(ObjectRoute.protected).map(([key, value]) => (
             <Route key={key} path={value.path} element={value.element} />
           ))}

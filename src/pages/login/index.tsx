@@ -2,10 +2,9 @@ import { Box, Card, Divider, Grid } from "@mui/material";
 import { styled } from "@mui/system";
 
 import LoginForm from "./LoginForm";
-import { Logo } from "@/components/base/Logo";
+import Logo from "@/components/common/Logo";
 
 const LoginPage = () => {
-  // const user = useAuthStore((state) => state.user);
   return (
     <LoginWrapper>
       <Grid justifyContent="center" spacing={0} container>

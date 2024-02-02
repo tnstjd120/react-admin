@@ -3,20 +3,22 @@ interface IUser {
   refreshToken: string;
   userId: string;
   userName: string;
-  profileImage: string;
-  roleId: number;
-  roleLabel: string;
+  profileImage?: string;
   isFirstLogin: boolean;
-  isUse: boolean;
-  success: boolean;
-  code: number;
-  message: string | null;
-  createdAt: string;
+  activeStatus?: number;
+  success?: boolean;
+  code?: number;
+  isUse?: boolean;
+  message?: string | null;
+  roleId?: number;
+  roleLabel?: string;
+  isPossAssign?: boolean;
+  createdAt?: string;
 }
 
 export type UserLoginResponse = Omit<
   IUser,
-  "createdAt" | "roleId" | "roleLabel" | "isUse"
+  "createdAt" | "roleId" | "roleLabel" | "isUse" | "isPossAssign"
 >;
 
 export type UserInfoResponse = Omit<IUser, "accessToken" | "refreshToken">;
