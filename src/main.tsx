@@ -4,8 +4,17 @@ import { BrowserRouter } from "react-router-dom";
 
 import "./assets/fonts.css";
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>
-);
+const enableMocking = async () => {
+  if (!import.meta.env.DEV) return;
+
+  const { worker } = await import("./mocks/browser.ts");
+  return worker.start();
+};
+
+enableMocking().then(() => {
+  ReactDOM.createRoot(document.getElementById("root")!).render(
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  );
+});

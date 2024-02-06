@@ -300,6 +300,7 @@ const CustomTable = () => {
   useEffect(() => {
     const getUsersInfo = async () => {
       const response = await getUsers();
+      console.log("users response => ", response);
       setRows(response.data.userLists);
     };
 
@@ -394,15 +395,8 @@ const CustomTable = () => {
                 rowCount={rows.length}
               />
               <TableBody>
-                {/* <TableRow
-                      style={{
-                        height: 53 * 3,
-                      }}
-                    >
-                      <TableCell colSpan={6}>loading...</TableCell>
-                    </TableRow> */}
                 <CustomTableRow
-                  rows={[]}
+                  rows={rows}
                   page={page}
                   rowsPerPage={rowsPerPage}
                   order={order}
