@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
-import { TableContext } from "./TableContext";
 import { Box, useTheme } from "@mui/material";
+import { TableProvider } from "./TableContext";
 
 type TableWrapperType = {
   children: ReactNode;
@@ -10,9 +10,9 @@ const TableWrapper = ({ children }: TableWrapperType) => {
   const theme = useTheme();
 
   return (
-    <TableContext.Provider value={}>
+    <TableProvider>
       <Box>{children}</Box>
-    </TableContext.Provider>
+    </TableProvider>
   );
 };
 

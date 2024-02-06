@@ -15,7 +15,6 @@ type TableContextType = {
   setSearchQuery: (query: string) => void;
   loading: boolean;
   setLoading: (loading: boolean) => void;
-  fetchData: () => void;
 };
 
 const TableContext = createContext<TableContextType | null>(null);
