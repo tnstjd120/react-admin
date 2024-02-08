@@ -5,10 +5,11 @@ import { BrowserRouter } from "react-router-dom";
 import "./assets/fonts.css";
 
 const enableMocking = async () => {
-  if (!import.meta.env.DEV) return;
+  return;
+  // if (!import.meta.env.DEV) return;
 
-  const { worker } = await import("./mocks/browser.ts");
-  return worker.start();
+  // const { worker } = await import("./mocks/browser.ts");
+  // return worker.start();
 };
 
 enableMocking().then(() => {

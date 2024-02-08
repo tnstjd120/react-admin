@@ -1,8 +1,6 @@
 import { Grid, Typography, Box, Breadcrumbs, Theme } from "@mui/material";
 import { IconCircle } from "@tabler/icons-react";
-
-import breadcrumbImg from "public/images/breadcrumb/ChatBc.png";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 interface BreadCrumbType {
   subtitle?: string;
@@ -12,9 +10,6 @@ interface BreadCrumbType {
 }
 
 const Breadcrumb = ({ subtitle, items, title, children }: BreadCrumbType) => {
-  const location = useLocation();
-  console.log("Breadcrumb location => ", location);
-
   return (
     <Grid
       container
@@ -82,7 +77,7 @@ const Breadcrumb = ({ subtitle, items, title, children }: BreadCrumbType) => {
             <>
               <Box sx={{ top: "0px", position: "absolute" }}>
                 <img
-                  src={breadcrumbImg}
+                  src="/images/breadcrumb/ChatBc.png"
                   alt={"breadcrumbImg"}
                   style={{ width: "165px", height: "165px" }}
                 />

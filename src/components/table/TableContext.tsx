@@ -1,20 +1,24 @@
 import { ReactNode, createContext, useContext, useState } from "react";
 
+export type Order = "asc" | "desc";
+
 type TableContextType = {
-  selectedRows: string[];
-  setSelectedRows: (selectedRows: string[]) => void;
-  order: "asc" | "desc";
-  setOrder: (order: "asc" | "desc") => void;
+  selected: string[];
+  setSelected: (selectedRows: string[]) => void;
+  order: Order;
+  setOrder: (order: Order) => void;
   orderBy: string;
   setOrderBy: (columnId: string) => void;
   page: number;
   setPage: (page: number) => void;
   rowsPerPage: number;
   setRowsPerPage: (rowsPerPage: number) => void;
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
+  search: string;
+  setSearch: (query: string) => void;
   loading: boolean;
   setLoading: (loading: boolean) => void;
+  rows: any;
+  setRows: any;
 };
 
 const TableContext = createContext<TableContextType | null>(null);
@@ -32,19 +36,20 @@ type TableProviderType = {
 };
 
 export const TableProvider = ({ children }: TableProviderType) => {
-  const [selectedRows, setSelectedRows] = useState<string[]>([]);
-  const [order, setOrder] = useState<"asc" | "desc">("asc");
+  const [selected, setSelected] = useState<string[]>([]);
+  const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("");
-  const [page, setPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
-  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [search, setSearch] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [rows, setRows] = useState([]);
 
   return (
     <TableContext.Provider
       value={{
-        selectedRows,
-        setSelectedRows,
+        selected,
+        setSelected,
         order,
         setOrder,
         orderBy,
@@ -53,10 +58,12 @@ export const TableProvider = ({ children }: TableProviderType) => {
         setPage,
         rowsPerPage,
         setRowsPerPage,
-        searchQuery,
-        setSearchQuery,
+        search,
+        setSearch,
         loading,
         setLoading,
+        rows,
+        setRows,
       }}
     >
       {children}
