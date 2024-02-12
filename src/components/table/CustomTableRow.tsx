@@ -8,6 +8,7 @@ import {
   Menu,
   MenuItem,
   MenuProps,
+  Stack,
   TableCell,
   TableRow,
   Tooltip,
@@ -17,24 +18,19 @@ import {
 } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
-import { IconDotsVertical, IconEdit } from "@tabler/icons-react";
+import { MouseEventHandler, useEffect, useState } from "react";
+import {
+  IconDotsVertical,
+  IconEdit,
+  IconRowRemove,
+  IconTrash,
+} from "@tabler/icons-react";
 import { UserInfoResponse } from "@/types/User";
 import { Order, useTableContext } from "./TableContext";
 import CustomTableSkeleton from "./CustomTableSkeleton";
 import { API_PATH } from "@/api/API_PATH";
 import { api } from "@/api/axios";
-import { EditNotifications } from "@mui/icons-material";
-
-type Props = {
-  rows: UserInfoResponse[];
-  order: Order;
-  orderBy: string;
-  page: number;
-  rowsPerPage: number;
-  selected: readonly string[];
-  handleClick: (event: React.MouseEvent<unknown>, name: string) => void;
-};
+import CustomDrawer from "@/pages/manage/users/CustomDrawer";
 
 const CustomTableRow = () => {
   const {
@@ -106,8 +102,15 @@ const CustomTableRow = () => {
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
   };
-  const handleSettingsClose = () => {
+  const handleSettingsClose: MouseEventHandler<HTMLElement> = (event) => {
+    event.stopPropagation();
     setAnchorEl(null);
+  };
+
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const handleUserSettingsOpen = () => {
+    setDrawerOpen(true);
   };
 
   const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
@@ -234,21 +237,17 @@ const CustomTableRow = () => {
 
                 <TableCell width={60}>
                   <Tooltip title="사용자 설정">
-                    <IconButton size="small" onClick={handleSettingsClick}>
+                    <IconButton size="small" onClick={handleUserSettingsOpen}>
                       <IconDotsVertical size="1.1rem" />
                     </IconButton>
                   </Tooltip>
 
-                  <StyledMenu
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    onClose={handleSettingsClose}
+                  <CustomDrawer
+                    open={drawerOpen}
+                    onToggle={(value) => setDrawerOpen(value)}
                   >
-                    <MenuItem onClick={handleSettingsClose} disableRipple>
-                      <IconEdit />
-                      Edit
-                    </MenuItem>
-                  </StyledMenu>
+                    Users Settings Content
+                  </CustomDrawer>
                 </TableCell>
               </TableRow>
             );
@@ -261,8 +260,26 @@ const CustomTableRow = () => {
 };
 
 export default CustomTableRow;
+{
+  /* <CustomMenu
+anchorEl={anchorEl}
+open={Boolean(anchorEl)}
+onClose={handleSettingsClose}
+>
+<MenuItem onClick={handleSettingsClose} disableRipple>
+  <Stack direction="row" gap={1}>
+    수정
+  </Stack>
+</MenuItem>
 
-const StyledMenu = styled((props: MenuProps) => (
+<MenuItem onClick={handleSettingsClose} disableRipple>
+  <Stack direction="row" gap={1}>
+    삭제
+  </Stack>
+</MenuItem>
+</CustomMenu> */
+}
+const CustomMenu = styled((props: MenuProps) => (
   <Menu
     elevation={0}
     anchorOrigin={{
@@ -279,15 +296,19 @@ const StyledMenu = styled((props: MenuProps) => (
   "& .MuiPaper-root": {
     borderRadius: 6,
     marginTop: theme.spacing(1),
-    minWidth: 180,
+    minWidth: 40,
+    border: "none",
     color:
       theme.palette.mode === "light"
         ? "rgb(55, 65, 81)"
         : theme.palette.grey[300],
     boxShadow:
-      "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px",
+      "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.01) 0px 0px 0px 1px, rgba(0, 0, 0, 0.04) 0px 10px 15px -3px, rgba(0, 0, 0, 0.01) 0px 4px 6px -2px",
     "& .MuiMenu-list": {
       padding: "4px 0",
+      "& .MuiMenuItem-root:last-of-type": {
+        borderTop: "1px solid #ddd",
+      },
     },
     "& .MuiMenuItem-root": {
       "& .MuiSvgIcon-root": {
