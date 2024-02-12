@@ -30,7 +30,7 @@ import { Order, useTableContext } from "./TableContext";
 import CustomTableSkeleton from "./CustomTableSkeleton";
 import { API_PATH } from "@/api/API_PATH";
 import { api } from "@/api/axios";
-import CustomDrawer from "@/pages/manage/users/CustomDrawer";
+import UserDrawer from "@/pages/manage/users/UserDrawer";
 
 const CustomTableRow = () => {
   const {
@@ -109,7 +109,10 @@ const CustomTableRow = () => {
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const handleUserSettingsOpen = () => {
+  const handleUserSettingsOpen: MouseEventHandler<HTMLButtonElement> = (
+    event
+  ) => {
+    event.stopPropagation();
     setDrawerOpen(true);
   };
 
@@ -242,12 +245,10 @@ const CustomTableRow = () => {
                     </IconButton>
                   </Tooltip>
 
-                  <CustomDrawer
+                  <UserDrawer
                     open={drawerOpen}
                     onToggle={(value) => setDrawerOpen(value)}
-                  >
-                    Users Settings Content
-                  </CustomDrawer>
+                  />
                 </TableCell>
               </TableRow>
             );
