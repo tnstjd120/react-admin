@@ -1,5 +1,7 @@
 import CustomTable from "@/components/table/CustomTable";
-import CustomTableHead from "@/components/table/CustomTableHead";
+import CustomTableHead, {
+  HeadCellType,
+} from "@/components/table/CustomTableHead";
 import CustomTablePagination from "@/components/table/CustomTablePagination";
 import CustomTableRow from "@/components/table/CustomTableRow";
 import CustomTableToolbar from "@/components/table/CustomTableToolbar";
@@ -15,6 +17,45 @@ const UsersTable = () => {
   const theme = useTheme();
   const borderColor = theme.palette.divider;
 
+  const headCells: readonly HeadCellType[] = [
+    {
+      id: "userName",
+      numeric: false,
+      useSortable: true,
+      label: "프로필",
+    },
+    {
+      id: "userId",
+      numeric: false,
+      useSortable: true,
+      label: "아이디",
+    },
+    {
+      id: "createdAt",
+      numeric: false,
+      useSortable: true,
+      label: "가입 일자",
+    },
+    {
+      id: "isUse",
+      numeric: false,
+      useSortable: true,
+      label: "승인 상태",
+    },
+    {
+      id: "isPossAssign",
+      numeric: false,
+      useSortable: true,
+      label: "배정 상태",
+    },
+    {
+      id: "action",
+      numeric: false,
+      useSortable: false,
+      label: "설정",
+    },
+  ];
+
   return (
     <CustomTable>
       <CustomTableToolbar />
@@ -25,7 +66,7 @@ const UsersTable = () => {
       >
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
-            <CustomTableHead />
+            <CustomTableHead headCells={headCells} />
 
             <TableBody>
               <CustomTableRow />

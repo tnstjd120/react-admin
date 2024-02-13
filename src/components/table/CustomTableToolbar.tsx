@@ -1,4 +1,5 @@
 import {
+  Autocomplete,
   Box,
   IconButton,
   InputAdornment,
@@ -7,6 +8,7 @@ import {
   Tooltip,
   Typography,
   alpha,
+  styled,
 } from "@mui/material";
 import { IconDotsVertical, IconFilter, IconSearch } from "@tabler/icons-react";
 import { useTableContext } from "./TableContext";
@@ -26,6 +28,12 @@ const CustomTableToolbar = () => {
     setRows(filteredRows);
   };
 
+  const searchFilterData = [
+    { key: "all", title: "전체" },
+    { key: "userId", title: "아이디" },
+    { key: "userName", title: "이름" },
+  ];
+
   return (
     <Toolbar
       sx={{
@@ -38,6 +46,7 @@ const CustomTableToolbar = () => {
               theme.palette.action.activatedOpacity
             ),
         }),
+        justifyContent: "space-between",
       }}
     >
       {selected.length > 0 ? (
@@ -50,7 +59,35 @@ const CustomTableToolbar = () => {
           {selected.length} 선택됨
         </Typography>
       ) : (
-        <Box sx={{ flex: "1 1 100%" }}>
+        <Box
+          sx={{
+            flex: "1 1 100%",
+            display: "flex",
+            flexDirection: "column",
+            gap: 1,
+            maxWidth: 300,
+            pt: 2,
+            pb: 1,
+          }}
+        >
+          <Autocomplete
+            multiple
+            fullWidth
+            size="small"
+            id="tags-outlined"
+            options={searchFilterData}
+            getOptionLabel={(option) => option.title}
+            defaultValue={[searchFilterData[0]]}
+            filterSelectedOptions
+            renderInput={(params) => (
+              <CustomTextField
+                {...params}
+                placeholder="검색 조건"
+                aria-label="검색 조건"
+              />
+            )}
+          />
+
           <TextField
             InputProps={{
               startAdornment: (
@@ -87,3 +124,19 @@ const CustomTableToolbar = () => {
 };
 
 export default CustomTableToolbar;
+
+const CustomTextField = styled((props: any) => <TextField {...props} />)(
+  ({ theme }) => ({
+    "& .MuiOutlinedInput-input::-webkit-input-placeholder": {
+      color: theme.palette.text.secondary,
+      opacity: "0.8",
+    },
+    "& .MuiOutlinedInput-input.Mui-disabled::-webkit-input-placeholder": {
+      color: theme.palette.text.secondary,
+      opacity: "1",
+    },
+    "& .Mui-disabled .MuiOutlinedInput-notchedOutline": {
+      borderColor: theme.palette.grey[200],
+    },
+  })
+);

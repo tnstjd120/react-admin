@@ -3,6 +3,7 @@ import App from "./App.tsx";
 import { BrowserRouter } from "react-router-dom";
 
 import "./assets/fonts.css";
+import { SnackbarProvider } from "notistack";
 
 const enableMocking = async () => {
   return;
@@ -15,7 +16,9 @@ const enableMocking = async () => {
 enableMocking().then(() => {
   ReactDOM.createRoot(document.getElementById("root")!).render(
     <BrowserRouter>
-      <App />
+      <SnackbarProvider maxSnack={3}>
+        <App />
+      </SnackbarProvider>
     </BrowserRouter>
   );
 });

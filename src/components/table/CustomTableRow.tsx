@@ -6,9 +6,8 @@ import {
   Chip,
   IconButton,
   Menu,
-  MenuItem,
   MenuProps,
-  Stack,
+  Switch,
   TableCell,
   TableRow,
   Tooltip,
@@ -18,19 +17,16 @@ import {
 } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import dayjs from "dayjs";
-import { MouseEventHandler, useEffect, useState } from "react";
-import {
-  IconDotsVertical,
-  IconEdit,
-  IconRowRemove,
-  IconTrash,
-} from "@tabler/icons-react";
+import { ChangeEvent, MouseEvent, useEffect, useState } from "react";
+import { IconDotsVertical } from "@tabler/icons-react";
 import { UserInfoResponse } from "@/types/User";
 import { Order, useTableContext } from "./TableContext";
 import CustomTableSkeleton from "./CustomTableSkeleton";
 import { API_PATH } from "@/api/API_PATH";
 import { api } from "@/api/axios";
 import UserDrawer from "@/pages/manage/users/UserDrawer";
+import { useRoleState } from "@/store/useRoleState";
+import CustomCheckbox from "../form/CustomCheckbox";
 
 const CustomTableRow = () => {
   const {
@@ -43,6 +39,8 @@ const CustomTableRow = () => {
     selected,
     setSelected,
   } = useTableContext();
+
+  const roles = useRoleState((state) => state.roles);
 
   const getUsers = async () => {
     const { PATH, METHOD } = API_PATH.USERS.USERS_INFO_GET;
@@ -97,22 +95,28 @@ const CustomTableRow = () => {
     return stabilizedThis.map((el) => el[0]);
   }
 
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const handleSettingsClick: React.MouseEventHandler<HTMLElement> = (event) => {
-    event.stopPropagation();
-    setAnchorEl(event.currentTarget);
-  };
-  const handleSettingsClose: MouseEventHandler<HTMLElement> = (event) => {
-    event.stopPropagation();
-    setAnchorEl(null);
-  };
+  // const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  // const handleSettingsClick: React.MouseEventHandler<HTMLElement> = (event) => {
+  //   event.stopPropagation();
+  //   setAnchorEl(event.currentTarget);
+  // };
+  // const handleSettingsClose: MouseEventHandler<HTMLElement> = (event) => {
+  //   event.stopPropagation();
+  //   setAnchorEl(null);
+  // };
 
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [settingUser, setSettingUser] = useState<UserInfoResponse | null>(null);
 
-  const handleUserSettingsOpen: MouseEventHandler<HTMLButtonElement> = (
-    event
+  const handleUserSettingsOpen = (
+    event: MouseEvent<HTMLButtonElement>,
+    userId: string
   ) => {
     event.stopPropagation();
+    setSettingUser(
+      rows.filter((row: UserInfoResponse) => row.userId === userId)[0]
+    );
+
     setDrawerOpen(true);
   };
 
@@ -136,6 +140,28 @@ const CustomTableRow = () => {
     setSelected(newSelected);
   };
 
+  const handleChangeIsPossAssign = async (
+    event: ChangeEvent<HTMLInputElement>,
+    userId: string
+  ) => {
+    const { PATH, METHOD } = API_PATH.USERS.POSS_ASSIGN_PUT;
+    const response = await api(PATH, {
+      ...METHOD,
+      data: { userId: userId, isPossAssign: event.target.checked },
+    });
+
+    if (response.data.success) {
+      const newRows = rows.map((row: UserInfoResponse) => {
+        if (row.userId === userId) {
+          row.isPossAssign = !event.target.checked;
+        }
+        return row;
+      });
+
+      setRows([...newRows]);
+    }
+  };
+
   return (
     <>
       {rows.length ? (
@@ -156,7 +182,7 @@ const CustomTableRow = () => {
                 selected={isItemSelected}
               >
                 <TableCell padding="checkbox">
-                  <Checkbox
+                  <CustomCheckbox
                     color="primary"
                     checked={isItemSelected}
                     inputProps={{
@@ -220,17 +246,6 @@ const CustomTableRow = () => {
                 </TableCell>
 
                 <TableCell>
-                  <Chip
-                    color={row.isUse ? "success" : "error"}
-                    size="small"
-                    label={row.isUse ? "승인" : "미승인"}
-                    sx={{
-                      borderRadius: "6px",
-                    }}
-                  />
-                </TableCell>
-
-                <TableCell>
                   <Typography>
                     {dayjs(new Date(row.createdAt as string)).format(
                       "YYYY. MM. DD"
@@ -238,17 +253,39 @@ const CustomTableRow = () => {
                   </Typography>
                 </TableCell>
 
+                <TableCell>
+                  <Switch
+                    id="userIsUse"
+                    name="isUse"
+                    checked={row.isUse}
+                    // onChange={handleChangeSwitch}
+                    onClick={(event) => event.stopPropagation()}
+                  />
+                </TableCell>
+
+                <TableCell>
+                  <Switch
+                    id="userIsPossAssign"
+                    name="isPossAssign"
+                    checked={row.isPossAssign}
+                    onChange={(event) =>
+                      handleChangeIsPossAssign(event, row.userId)
+                    }
+                    onClick={(event) => event.stopPropagation()}
+                  />
+                </TableCell>
+
                 <TableCell width={60}>
                   <Tooltip title="사용자 설정">
-                    <IconButton size="small" onClick={handleUserSettingsOpen}>
+                    <IconButton
+                      size="small"
+                      onClick={(event) =>
+                        handleUserSettingsOpen(event, row.userId)
+                      }
+                    >
                       <IconDotsVertical size="1.1rem" />
                     </IconButton>
                   </Tooltip>
-
-                  <UserDrawer
-                    open={drawerOpen}
-                    onToggle={(value) => setDrawerOpen(value)}
-                  />
                 </TableCell>
               </TableRow>
             );
@@ -256,6 +293,13 @@ const CustomTableRow = () => {
       ) : (
         <CustomTableSkeleton rowsCount={10} />
       )}
+
+      <UserDrawer
+        open={drawerOpen}
+        onToggle={(value) => setDrawerOpen(value)}
+        data={settingUser}
+        roles={roles}
+      />
     </>
   );
 };

@@ -6,10 +6,22 @@ import {
   TableRow,
   TableSortLabel,
 } from "@mui/material";
-import { Order, useTableContext } from "./TableContext";
+import { useTableContext } from "./TableContext";
 import { visuallyHidden } from "@mui/utils";
+import CustomCheckbox from "../form/CustomCheckbox";
 
-const CustomTableHead = () => {
+export interface HeadCellType {
+  id: string;
+  label: string | React.ReactNode;
+  numeric: boolean;
+  useSortable: boolean;
+}
+
+type Props = {
+  headCells: readonly HeadCellType[];
+};
+
+const CustomTableHead = ({ headCells }: Props) => {
   const { selected, order, setOrder, orderBy, setOrderBy, rows, setSelected } =
     useTableContext();
 
@@ -40,7 +52,7 @@ const CustomTableHead = () => {
     <TableHead>
       <TableRow>
         <TableCell padding="checkbox">
-          <Checkbox
+          <CustomCheckbox
             color="primary"
             checked={rows.length > 0 && selected.length === rows.length}
             onChange={handleSelectAllClick}
@@ -82,43 +94,3 @@ const CustomTableHead = () => {
 };
 
 export default CustomTableHead;
-
-interface HeadCellType {
-  id: string;
-  label: string | React.ReactNode;
-  numeric: boolean;
-  useSortable: boolean;
-}
-
-const headCells: readonly HeadCellType[] = [
-  {
-    id: "userName",
-    numeric: false,
-    useSortable: true,
-    label: "프로필",
-  },
-  {
-    id: "userId",
-    numeric: false,
-    useSortable: true,
-    label: "아이디",
-  },
-  {
-    id: "isUse",
-    numeric: false,
-    useSortable: true,
-    label: "상태",
-  },
-  {
-    id: "createdAt",
-    numeric: false,
-    useSortable: true,
-    label: "가입 일자",
-  },
-  {
-    id: "action",
-    numeric: false,
-    useSortable: false,
-    label: "설정",
-  },
-];
