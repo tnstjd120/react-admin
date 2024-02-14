@@ -131,35 +131,6 @@ const LeftCard = () => {
             </CustomAccordion>
           ))}
       </Scrollbar>
-
-      {/* <List>
-        <ListItem sx={{ display: "flex", flexDirection: "column" }}>
-          <Button
-            fullWidth
-            endIcon={open ? <IconArrowUp /> : <IconArrowDown />}
-            onClick={() => setOpen(!open)}
-            sx={{ justifyContent: "space-between" }}
-          >
-            90245897813
-          </Button>
-
-          <Collapse
-            in={open}
-            timeout="auto"
-            unmountOnExit
-            sx={{ border: "1px solid blue", borderTop: 0 }}
-          >
-            <List>
-              <ListItem sx={{ width: "100%" }}>
-                <img
-                  width="100%"
-                  src="https://upload.wikimedia.org/wikipedia/commons/c/c3/LibreOffice_Writer_6.3.png"
-                ></img>
-              </ListItem>
-            </List>
-          </Collapse>
-        </ListItem>
-      </List> */}
     </LeftCardContainer>
   );
 };
