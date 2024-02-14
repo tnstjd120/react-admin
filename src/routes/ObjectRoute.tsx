@@ -4,6 +4,7 @@ import UsersPage from "@/pages/manage/users";
 import WorksPage from "@/pages/manage/works";
 import ProfilePage from "@/pages/profile";
 import SignupPage from "@/pages/signup";
+import QaWorkPage from "@/pages/work/qa";
 import { ReactNode } from "react";
 
 // TODO:
@@ -46,6 +47,11 @@ const ObjectRoute: Record<TProtected, TRoutes> = {
       label: "프로필",
       path: "/profile",
       element: <ProfilePage />,
+    },
+    QA_WORK: {
+      label: "정보 입력",
+      path: "/work/qa",
+      element: <QaWorkPage />,
     },
   },
   unprotected: {

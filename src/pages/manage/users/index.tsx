@@ -1,5 +1,6 @@
 import Breadcrumb from "@/components/common/Breadcrumb";
-import BlankCard from "./BlankCard";
+import BlankCard from "@/components/common/BlankCard";
+
 import UsersTable from "./UsersTable";
 
 const BCrumb = [

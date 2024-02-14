@@ -74,7 +74,9 @@ const UsersTable = () => {
           </Table>
         </TableContainer>
 
-        <CustomTablePagination rowsPerPageOptions={[10, 20, 30, 40, 50]} />
+        <CustomTablePagination
+          rowsPerPageOptions={[1, 2, 3, 10, 20, 30, 40, 50]}
+        />
       </Paper>
     </CustomTable>
   );

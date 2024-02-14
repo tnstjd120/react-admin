@@ -17,7 +17,7 @@ const Layout = ({ children }: Props) => {
 
       <Stack
         flexGrow={1}
-        paddingBottom="60px"
+        paddingBottom="20px"
         zIndex={1}
         width="100%"
         sx={{
@@ -32,7 +32,7 @@ const Layout = ({ children }: Props) => {
 
         <Container
           sx={{
-            maxWidth: isLayout === "boxed" ? "lg" : "100%!important",
+            maxWidth: "100% !important",
           }}
         >
           <Box sx={{ minHeight: "calc(100vh - 170px)" }}>{<Outlet />}</Box>

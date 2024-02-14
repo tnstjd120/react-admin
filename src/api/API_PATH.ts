@@ -55,9 +55,13 @@ export const API_PATH = {
       METHOD: { method: "GET" },
       PATH: "/api/users/profileImages",
     },
-    POSS_ASSIGN_PUT: {
+    IS_POSS_ASSIGN_PUT: {
       METHOD: { method: "POST" },
       PATH: "/api/users/possAssign",
+    },
+    IS_USE_PUT: {
+      METHOD: { method: "POST" },
+      PATH: "/api/users/editUserIsUse",
     },
   },
 } as const;

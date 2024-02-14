@@ -2,7 +2,7 @@ import { ReactNode, createContext, useContext, useState } from "react";
 
 export type Order = "asc" | "desc";
 
-type TableContextType = {
+interface ITableContext {
   selected: string[];
   setSelected: (selectedRows: string[]) => void;
   order: Order;
@@ -19,14 +19,14 @@ type TableContextType = {
   setLoading: (loading: boolean) => void;
   rows: any;
   setRows: any;
-};
+}
 
-const TableContext = createContext<TableContextType | null>(null);
+const TableContext = createContext<ITableContext | null>(null);
 
 export const useTableContext = () => {
   const context = useContext(TableContext);
 
-  if (!context) throw new Error("useTable is null");
+  if (!context) throw new Error("useTableContext is null");
 
   return context;
 };

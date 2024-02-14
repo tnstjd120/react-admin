@@ -63,9 +63,8 @@ const CustomTableToolbar = () => {
           sx={{
             flex: "1 1 100%",
             display: "flex",
-            flexDirection: "column",
+            alignItems: "center",
             gap: 1,
-            maxWidth: 300,
             pt: 2,
             pb: 1,
           }}
@@ -77,7 +76,7 @@ const CustomTableToolbar = () => {
             id="tags-outlined"
             options={searchFilterData}
             getOptionLabel={(option) => option.title}
-            defaultValue={[searchFilterData[0]]}
+            // defaultValue={[searchFilterData[0]]}
             filterSelectedOptions
             renderInput={(params) => (
               <CustomTextField
@@ -86,6 +85,7 @@ const CustomTableToolbar = () => {
                 aria-label="검색 조건"
               />
             )}
+            sx={{ maxWidth: 200 }}
           />
 
           <TextField

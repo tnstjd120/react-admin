@@ -75,7 +75,6 @@ const UserDrawer = ({ open, onToggle, data, roles }: Props) => {
 
   const { enqueueSnackbar } = useSnackbar();
   const handleOpenSnack = (text: string, variant?: VariantType) => {
-    console.log("snack");
     enqueueSnackbar(text, { variant });
   };
 

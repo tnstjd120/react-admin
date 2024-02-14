@@ -12,7 +12,7 @@ export const checkAuth = async () => {
       userInfo: response.data as UserInfoResponse,
     };
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return { isAuth: false, userInfo: null };
   }
 };

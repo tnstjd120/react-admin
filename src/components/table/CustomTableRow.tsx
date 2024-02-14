@@ -144,7 +144,7 @@ const CustomTableRow = () => {
     event: ChangeEvent<HTMLInputElement>,
     userId: string
   ) => {
-    const { PATH, METHOD } = API_PATH.USERS.POSS_ASSIGN_PUT;
+    const { PATH, METHOD } = API_PATH.USERS.IS_POSS_ASSIGN_PUT;
     const response = await api(PATH, {
       ...METHOD,
       data: { userId: userId, isPossAssign: event.target.checked },
@@ -154,6 +154,28 @@ const CustomTableRow = () => {
       const newRows = rows.map((row: UserInfoResponse) => {
         if (row.userId === userId) {
           row.isPossAssign = !event.target.checked;
+        }
+        return row;
+      });
+
+      setRows([...newRows]);
+    }
+  };
+
+  const handleChangeIsUse = async (
+    event: ChangeEvent<HTMLInputElement>,
+    userId: string
+  ) => {
+    const { PATH, METHOD } = API_PATH.USERS.IS_USE_PUT;
+    const response = await api(PATH, {
+      ...METHOD,
+      data: { userId: userId, isUse: event.target.checked },
+    });
+
+    if (response.data.success) {
+      const newRows = rows.map((row: UserInfoResponse) => {
+        if (row.userId === userId) {
+          row.isUse = !event.target.checked;
         }
         return row;
       });
@@ -258,7 +280,7 @@ const CustomTableRow = () => {
                     id="userIsUse"
                     name="isUse"
                     checked={row.isUse}
-                    // onChange={handleChangeSwitch}
+                    onChange={(event) => handleChangeIsUse(event, row.userId)}
                     onClick={(event) => event.stopPropagation()}
                   />
                 </TableCell>
