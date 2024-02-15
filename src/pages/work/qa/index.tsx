@@ -1,23 +1,13 @@
 import BlankCard from "@/components/common/BlankCard";
 import Breadcrumb from "@/components/common/Breadcrumb";
 import { Card, Input, Stack } from "@mui/material";
-import LeftCard from "./LeftCard";
+import ReceiptsCard from "./left/ReceiptsCard";
 import RightCard from "./RigthCard";
-
-const BCrumb = [
-  {
-    title: "Work",
-  },
-  {
-    title: "정보 입력",
-  },
-];
+import { QaWorkProvider } from "./QaWorkContext";
 
 const QaWorkPage = () => {
   return (
-    <>
-      {/* <Breadcrumb title="정보 입력" items={BCrumb} /> */}
-
+    <QaWorkProvider>
       <Stack sx={{ height: "calc(100vh - 90px)" }} spacing={2}>
         <Card sx={{ height: "60px", minHeight: "60px" }}>
           <Input type="date" />
@@ -29,14 +19,14 @@ const QaWorkPage = () => {
           spacing={2}
           flex={1}
         >
-          <LeftCard />
+          <ReceiptsCard />
 
           <RightCard>
             <div>Right</div>
           </RightCard>
         </Stack>
       </Stack>
-    </>
+    </QaWorkProvider>
   );
 };
 
