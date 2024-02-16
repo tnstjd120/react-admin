@@ -1,17 +1,14 @@
-import BlankCard from "@/components/common/BlankCard";
-import Breadcrumb from "@/components/common/Breadcrumb";
-import { Card, Input, Stack } from "@mui/material";
-import ReceiptsCard from "./left/ReceiptsCard";
-import RightCard from "./RigthCard";
+import { Stack } from "@mui/material";
 import { QaWorkProvider } from "./QaWorkContext";
+import ReceiptsCard from "./left/ReceiptsCard";
+import RightCard from "./right/RigthCard";
+import TopBar from "./top/TopBar";
 
 const QaWorkPage = () => {
   return (
     <QaWorkProvider>
       <Stack sx={{ height: "calc(100vh - 90px)" }} spacing={2}>
-        <Card sx={{ height: "60px", minHeight: "60px" }}>
-          <Input type="date" />
-        </Card>
+        <TopBar />
 
         <Stack
           direction="row"
@@ -21,9 +18,7 @@ const QaWorkPage = () => {
         >
           <ReceiptsCard />
 
-          <RightCard>
-            <div>Right</div>
-          </RightCard>
+          <RightCard />
         </Stack>
       </Stack>
     </QaWorkProvider>

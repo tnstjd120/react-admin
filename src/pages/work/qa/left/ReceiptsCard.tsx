@@ -1,40 +1,29 @@
-import BlankCard from "@/components/common/BlankCard";
-import Scrollbar from "@/components/common/Scrollbar";
-import theme from "@/utils/theme";
 import {
   Accordion,
-  AccordionActions,
   AccordionDetails,
   AccordionProps,
   AccordionSummary,
-  AppBar,
   Box,
-  Button,
   Chip,
-  ChipProps,
   Divider,
-  FormControlLabel,
-  IconButton,
   ImageList,
   ImageListItem,
-  ImageListItemBar,
   List,
   ListItem,
-  MenuItem,
-  Select,
   Stack,
-  Switch,
   Tab,
   Tabs,
-  Toolbar,
   Typography,
   styled,
   useTheme,
 } from "@mui/material";
-import { grey } from "@mui/material/colors";
-import { IconChevronDown, IconList, IconPhoto } from "@tabler/icons-react";
+import { IconChevronDown } from "@tabler/icons-react";
 import { ReactNode, SyntheticEvent, useState } from "react";
 import { useQaWorkContext } from "../QaWorkContext";
+
+import BlankCard from "@/components/common/BlankCard";
+import Scrollbar from "@/components/common/Scrollbar";
+import theme from "@/utils/theme";
 
 const ReceiptsCard = () => {
   const [expanded, setExpanded] = useState<string | false>(false);
@@ -53,12 +42,7 @@ const ReceiptsCard = () => {
     setTabValue(newValue);
   };
 
-  const [withImage, setWithImage] = useState(true);
-  const handleChangeWithImage = (withImage: boolean) => {
-    setWithImage(withImage);
-  };
-
-  const { mappedColors } = useQaWorkContext();
+  const { mappedColors, withImage } = useQaWorkContext();
 
   return (
     <ReceiptsCardContainer>
@@ -89,200 +73,171 @@ const ReceiptsCard = () => {
               </AccordionSummary>
 
               <AccordionDetails sx={{ p: withImage ? 2 : "0 !important" }}>
-                <Scrollbar sx={{ height: "50vh" }}>
-                  {withImage ? (
-                    <ImageList
-                      sx={{ width: "100%" }}
-                      cols={1}
-                      rowHeight={234}
-                      gap={16}
-                    >
-                      {Array(10)
-                        .fill(0)
-                        .map((_, j) => (
-                          <ImageListItem
-                            key={j}
+                {withImage ? (
+                  <ImageList
+                    sx={{ width: "100%" }}
+                    cols={1}
+                    rowHeight={234}
+                    gap={16}
+                  >
+                    {Array(10)
+                      .fill(0)
+                      .map((_, j) => (
+                        <ImageListItem
+                          key={j}
+                          sx={{
+                            width: "100%",
+                            borderRadius: "8px",
+                            overflow: "hidden",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            backgroundColor:
+                              j === 2 ? theme.palette.primary.main : "white",
+                            p: 1,
+                          }}
+                        >
+                          {![6, 7, 10].includes(i) && (
+                            <MappedChip
+                              label={j}
+                              mappedColor={mappedColors[j]}
+                              position="absolute"
+                            />
+                          )}
+
+                          <Stack
+                            height="100%"
                             sx={{
-                              width: "100%",
-                              borderRadius: "8px",
+                              borderRadius: 1,
+                              border: 1,
+                              borderColor: theme.palette.grey[300],
                               overflow: "hidden",
-                              display: "flex",
-                              justifyContent: "center",
-                              alignItems: "center",
-                              backgroundColor:
-                                j === 2 ? theme.palette.primary.main : "white",
-                              p: 1,
                             }}
                           >
-                            {![6, 7, 10].includes(i) && (
-                              <MappedChip
-                                label={j}
-                                mappedColor={mappedColors[j]}
-                                position="absolute"
-                              />
-                            )}
-
-                            <Stack
-                              height="100%"
-                              sx={{
-                                borderRadius: 1,
-                                border: 1,
-                                borderColor: theme.palette.grey[300],
-                                overflow: "hidden",
-                              }}
-                            >
-                              <Box
-                                bgcolor={theme.palette.grey[900]}
-                                borderRadius={0}
-                                display="flex"
-                                justifyContent="center"
-                                alignItems="center"
-                                flex={1}
-                              >
-                                <img
-                                  width="100%"
-                                  src="https://upload.wikimedia.org/wikipedia/commons/c/c3/LibreOffice_Writer_6.3.png"
-                                  alt={`이미지 ${j}`}
-                                  loading="lazy"
-                                />
-                              </Box>
-
-                              <Stack
-                                height="64px"
-                                justifyContent="space-between"
-                                p={1}
-                                bgcolor={theme.palette.background.paper}
-                                borderRadius={0}
-                              >
-                                <Stack direction="row" spacing={1}>
-                                  <Typography variant="subtitle2">
-                                    이미지
-                                  </Typography>
-
-                                  <Typography
-                                    variant="subtitle2"
-                                    fontWeight="bold"
-                                  >{`20240215245d000${j}`}</Typography>
-                                </Stack>
-
-                                {[0, 1, 2, 3, 4].includes(j) ? (
-                                  <Typography
-                                    variant="caption"
-                                    color="primary"
-                                    textAlign="right"
-                                    aria-label="updatedAt"
-                                    fontWeight="bold"
-                                  >
-                                    Updated. 2024.02.15 16:4{j}
-                                  </Typography>
-                                ) : (
-                                  <Typography
-                                    variant="caption"
-                                    color="default"
-                                    textAlign="right"
-                                    aria-label="updatedAt"
-                                  >
-                                    Not Updated
-                                  </Typography>
-                                )}
-                              </Stack>
-                            </Stack>
-                          </ImageListItem>
-                        ))}
-                    </ImageList>
-                  ) : (
-                    <List sx={{ p: 0 }}>
-                      {Array(10)
-                        .fill(0)
-                        .map((_, j) => (
-                          <ListItem
-                            sx={{
-                              p: 0,
-                              borderBottom: `1px solid ${theme.palette.grey[300]}`,
-                            }}
-                          >
-                            <Stack
-                              direction="row"
+                            <Box
+                              bgcolor={theme.palette.grey[900]}
+                              borderRadius={0}
+                              display="flex"
+                              justifyContent="center"
                               alignItems="center"
-                              justifyContent="space-around"
-                              spacing={1}
+                              flex={1}
+                            >
+                              <img
+                                width="100%"
+                                src="https://upload.wikimedia.org/wikipedia/commons/c/c3/LibreOffice_Writer_6.3.png"
+                                alt={`이미지 ${j}`}
+                                loading="lazy"
+                              />
+                            </Box>
+
+                            <Stack
+                              height="64px"
+                              justifyContent="space-between"
                               p={1}
                               bgcolor={theme.palette.background.paper}
-                              width="100%"
+                              borderRadius={0}
                             >
-                              <MappedChip
-                                label={j}
-                                mappedColor={mappedColors[j]}
-                              />
+                              <Stack direction="row" spacing={1}>
+                                <Typography variant="subtitle2">
+                                  이미지
+                                </Typography>
 
-                              <Stack
-                                height="42px"
-                                justifyContent="space-between"
-                              >
-                                <Stack direction="row" spacing={1}>
-                                  <Typography variant="subtitle2">
-                                    이미지
-                                  </Typography>
-
-                                  <Typography
-                                    variant="subtitle2"
-                                    fontWeight="bold"
-                                  >{`20240215245d000${j}`}</Typography>
-                                </Stack>
-
-                                {[0, 1, 2, 3, 4].includes(j) ? (
-                                  <Typography
-                                    variant="caption"
-                                    color="primary"
-                                    textAlign="right"
-                                    aria-label="updatedAt"
-                                    fontWeight="bold"
-                                  >
-                                    Updated. 2024.02.15 16:4{j}
-                                  </Typography>
-                                ) : (
-                                  <Typography
-                                    variant="caption"
-                                    color="default"
-                                    textAlign="right"
-                                    aria-label="updatedAt"
-                                  >
-                                    Not Updated
-                                  </Typography>
-                                )}
+                                <Typography
+                                  variant="subtitle2"
+                                  fontWeight="bold"
+                                >{`20240215245d000${j}`}</Typography>
                               </Stack>
+
+                              {[0, 1, 2, 3, 4].includes(j) ? (
+                                <Typography
+                                  variant="caption"
+                                  color="primary"
+                                  textAlign="right"
+                                  aria-label="updatedAt"
+                                  fontWeight="bold"
+                                >
+                                  Updated. 2024.02.15 16:4{j}
+                                </Typography>
+                              ) : (
+                                <Typography
+                                  variant="caption"
+                                  color="default"
+                                  textAlign="right"
+                                  aria-label="updatedAt"
+                                >
+                                  Not Updated
+                                </Typography>
+                              )}
                             </Stack>
-                          </ListItem>
-                        ))}
-                    </List>
-                  )}
-                </Scrollbar>
+                          </Stack>
+                        </ImageListItem>
+                      ))}
+                  </ImageList>
+                ) : (
+                  <List sx={{ p: 0 }}>
+                    {Array(10)
+                      .fill(0)
+                      .map((_, j) => (
+                        <ListItem
+                          key={j}
+                          sx={{
+                            p: 0,
+                            borderBottom: `1px solid ${theme.palette.grey[300]}`,
+                          }}
+                        >
+                          <Stack
+                            direction="row"
+                            alignItems="center"
+                            justifyContent="space-around"
+                            spacing={1}
+                            p={1}
+                            bgcolor={theme.palette.background.paper}
+                            width="100%"
+                          >
+                            <MappedChip
+                              label={j}
+                              mappedColor={mappedColors[j]}
+                            />
 
-                {/* <AppBar
-                  position="absolute"
-                  color="primary"
-                  sx={{ top: 0, bottom: "auto" }}
-                >
-                  <Toolbar>
-                    <IconButton color="inherit">
-                      <IconList />
-                    </IconButton>
-                  </Toolbar>
-                </AppBar> */}
+                            <Stack height="42px" justifyContent="space-between">
+                              <Stack direction="row" spacing={1}>
+                                <Typography variant="subtitle2">
+                                  이미지
+                                </Typography>
+
+                                <Typography
+                                  variant="subtitle2"
+                                  fontWeight="bold"
+                                >{`20240215245d000${j}`}</Typography>
+                              </Stack>
+
+                              {[0, 1, 2, 3, 4].includes(j) ? (
+                                <Typography
+                                  variant="caption"
+                                  color="primary"
+                                  textAlign="right"
+                                  aria-label="updatedAt"
+                                  fontWeight="bold"
+                                >
+                                  Updated. 2024.02.15 16:4{j}
+                                </Typography>
+                              ) : (
+                                <Typography
+                                  variant="caption"
+                                  color="default"
+                                  textAlign="right"
+                                  aria-label="updatedAt"
+                                >
+                                  Not Updated
+                                </Typography>
+                              )}
+                            </Stack>
+                          </Stack>
+                        </ListItem>
+                      ))}
+                  </List>
+                )}
               </AccordionDetails>
-
-              <AccordionActions sx={{ justifyContent: "flex-start" }}>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={withImage}
-                      onChange={() => handleChangeWithImage(!withImage)}
-                    />
-                  }
-                  label="With image"
-                  labelPlacement="start"
-                />
-              </AccordionActions>
             </CustomAccordion>
           ))}
       </Scrollbar>

@@ -17,6 +17,9 @@ interface IQaWorkContext {
   qaData: string[];
   setQaData: (newQaData: string[]) => void;
 
+  withImage: boolean;
+  handleChangeWithImage: (withImage: boolean) => void;
+
   mappedColors: string[];
 }
 
@@ -37,6 +40,11 @@ export const QaWorkProvider = ({ children }: { children: ReactNode }) => {
   const [currentImage, setCurrentImage] = useState<{}>({});
   const [exts, setExts] = useState<string[]>([]);
   const [qaData, setQaData] = useState<string[]>([]);
+
+  const [withImage, setWithImage] = useState(true);
+  const handleChangeWithImage = (withImage: boolean) => {
+    setWithImage(withImage);
+  };
 
   const mappedColors = [
     "#f65b46",
@@ -116,6 +124,8 @@ export const QaWorkProvider = ({ children }: { children: ReactNode }) => {
         setExts,
         qaData,
         setQaData,
+        withImage,
+        handleChangeWithImage,
         mappedColors,
       }}
     >
