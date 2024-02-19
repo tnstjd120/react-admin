@@ -1,7 +1,7 @@
 import Breadcrumb from "@/components/common/Breadcrumb";
 import BlankCard from "@/components/common/BlankCard";
 
-import UsersTable from "./UsersTable";
+import UserTable from "./UserTable";
 
 const BCrumb = [
   {
@@ -18,7 +18,7 @@ const UsersPage = () => {
       <Breadcrumb title="사용자 관리" items={BCrumb} />
 
       <BlankCard>
-        <UsersTable />
+        <UserTable />
       </BlankCard>
     </>
   );

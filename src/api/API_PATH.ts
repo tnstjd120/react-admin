@@ -64,4 +64,66 @@ export const API_PATH = {
       PATH: "/api/users/editUserIsUse",
     },
   },
+  QA: {
+    RECEIPTS_INCOMPLETE_GET: {
+      // 배정된 미완료 접수번호 리스트 조회
+      METHOD: { method: "GET" },
+      PATH: "/api/qa/inCompleteReceiptLists",
+    },
+    RECEIPTS_COMPLETE_GET: {
+      // 배정된 완료 접수번호 리스트 조회
+      METHOD: { method: "GET" },
+      PATH: "/api/qa/completeReceiptLists",
+    },
+    IMAGES_GET: {
+      // 접수번호 별 이미지 리스트 조회
+      METHOD: { method: "GET" },
+      PATH: "/api/qa/imageListsByReceiptId",
+    },
+    QA_DATA_GET: {
+      // 이미지 별 QA 데이터 리스트 조회
+      METHOD: { method: "GET" },
+      PATH: "/api/qa/qaDataListsByImageId",
+    },
+    QA_DATA_POST: {
+      // QA 데이터 생성/수정 (qaDataId ? 수정 : 생성)
+      METHOD: { method: "GET" },
+      PATH: "/api/qa/qaData",
+    },
+    MDCS_GET: {
+      // 접수번호 별 사고정보순번 리스트 조회
+      METHOD: { method: "GET" },
+      PATH: "/api/qa/mdcsListsByReceiptId",
+    },
+    MDCS_POST: {
+      // 사고정보순번 매핑
+      METHOD: { method: "POST" },
+      PATH: "/api/qa/mdcsMapping",
+    },
+    FLG_SUM_GET: {
+      // 사고정보순번 합산 리스트 (in Lotte, mapping)
+      METHOD: { method: "GET" },
+      PATH: "/api/qa/flgSumLists",
+    },
+    IMAGE_DELETE: {
+      // 이미지 삭제
+      METHOD: { method: "DELETE" },
+      PATH: "/api/qa/deleteImage",
+    },
+    IMAGES_TRASH_GET: {
+      // 이미지 휴지통 리스트 조회
+      METHOD: { method: "GET" },
+      PATH: "/api/qa/trashImageLists",
+    },
+    IMAGE_RESTORE_POST: {
+      // 이미지 복구
+      METHOD: { method: "POST" },
+      PATH: "/api/qa/restoreImage",
+    },
+    EDI_GET: {
+      // EDI 리스트 조회
+      METHOD: { method: "GET" },
+      PATH: "/api/qa/ediTest",
+    },
+  },
 } as const;

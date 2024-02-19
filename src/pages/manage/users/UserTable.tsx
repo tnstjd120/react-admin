@@ -3,7 +3,6 @@ import CustomTableHead, {
   HeadCellType,
 } from "@/components/table/CustomTableHead";
 import CustomTablePagination from "@/components/table/CustomTablePagination";
-import CustomTableRow from "@/components/table/CustomTableRow";
 import CustomTableToolbar from "@/components/table/CustomTableToolbar";
 import {
   Paper,
@@ -12,8 +11,9 @@ import {
   TableContainer,
   useTheme,
 } from "@mui/material";
+import UserTableRow from "./UserTableRow";
 
-const UsersTable = () => {
+const UserTable = () => {
   const theme = useTheme();
   const borderColor = theme.palette.divider;
 
@@ -69,7 +69,7 @@ const UsersTable = () => {
             <CustomTableHead headCells={headCells} />
 
             <TableBody>
-              <CustomTableRow />
+              <UserTableRow />
             </TableBody>
           </Table>
         </TableContainer>
@@ -82,4 +82,4 @@ const UsersTable = () => {
   );
 };
 
-export default UsersTable;
+export default UserTable;

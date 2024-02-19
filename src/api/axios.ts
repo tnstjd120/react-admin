@@ -1,5 +1,5 @@
 import { UserSilentRefreshResponse } from "@/types/User";
-import { getCookie, setCookie } from "@/utils/cookie";
+import { getCookie, removeCookie, setCookie } from "@/utils/cookie";
 import axios from "axios";
 import { API_PATH } from "./API_PATH";
 
@@ -38,6 +38,9 @@ api.interceptors.response.use(
           refreshToken: getCookie("refreshToken"),
         },
       });
+
+      removeCookie("accessToken");
+      removeCookie("refreshToken");
 
       console.log("silentResponse => ", silentResponse);
 
