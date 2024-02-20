@@ -9,13 +9,17 @@ const RightCard = () => {
   return (
     <RightCardContainer>
       <ReflexContainer>
-        <ReflexElement style={{ minWidth: "calc(100% - 41px)" }}>
+        <ReflexElement
+          flex={0.8}
+          minSize={100}
+          style={{ minWidth: "calc(100% - 41px)" }}
+        >
           <ImageController />
         </ReflexElement>
 
-        <ReflexSplitter />
+        <CustomReflexSplitter />
 
-        <ReflexElement flex={0.2}>
+        <ReflexElement style={{ overflow: "auto" }} flex={0.2}>
           <QaWorkTable />
         </ReflexElement>
       </ReflexContainer>
@@ -28,3 +32,12 @@ export default RightCard;
 const RightCardContainer = styled(Card)`
   padding: 0;
 `;
+
+const CustomReflexSplitter = styled(ReflexSplitter)(({ theme }) => ({
+  "&:hover": {
+    transition: "0.05s !important",
+    backgroundColor: `${theme.palette.primary.main} !important`,
+    transform: "scaleY(3) !important",
+    border: "0 !important",
+  },
+}));

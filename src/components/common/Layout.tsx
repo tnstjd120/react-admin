@@ -2,7 +2,7 @@ import { Box, Container, Stack, useTheme } from "@mui/material";
 import { ReactNode } from "react";
 import Sidebar from "./sidebar/Sidebar";
 import Header from "./header/Header";
-import { useStylesState } from "@/store/useStylesState";
+import { useStylesState } from "@/store/useStylesStore";
 import { Outlet } from "react-router-dom";
 
 type Props = { children: ReactNode };
@@ -19,7 +19,7 @@ const Layout = ({ children }: Props) => {
         flexGrow={1}
         paddingBottom="20px"
         zIndex={1}
-        width="100%"
+        width="calc(100% - 270px)"
         sx={{
           ...(isCollapse && {
             [theme.breakpoints.up("lg")]: {

@@ -1,5 +1,5 @@
 "use client";
-import { useStylesState } from "@/store/useStylesState";
+import { useStylesState } from "@/store/useStylesStore";
 import { Card } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 

@@ -8,6 +8,7 @@ import {
   Menu,
   MenuProps,
   Switch,
+  TableBody,
   TableCell,
   TableRow,
   Tooltip,
@@ -20,13 +21,14 @@ import dayjs from "dayjs";
 import { ChangeEvent, MouseEvent, useEffect, useState } from "react";
 import { IconDotsVertical } from "@tabler/icons-react";
 import { UserInfoResponse } from "@/types/User";
-import { Order, useTableContext } from "@/components/table/TableContext";
+import { Order } from "@/components/table/TableContext";
 import CustomTableSkeleton from "@/components/table/CustomTableSkeleton";
 import { API_PATH } from "@/api/API_PATH";
 import { api } from "@/api/axios";
 import UserDrawer from "@/pages/manage/users/UserDrawer";
-import { useRoleState } from "@/store/useRoleState";
+import { useRoleState } from "@/store/useRoleStore";
 import CustomCheckbox from "@/components/form/CustomCheckbox";
+import { useTableStore } from "@/store/useTableStore";
 
 const UserTableRow = () => {
   const {
@@ -38,23 +40,9 @@ const UserTableRow = () => {
     orderBy,
     selected,
     setSelected,
-  } = useTableContext();
+  } = useTableStore((state) => state);
 
   const roles = useRoleState((state) => state.roles);
-
-  const getUsers = async () => {
-    const { PATH, METHOD } = API_PATH.USERS.USERS_INFO_GET;
-    return await api(PATH, METHOD);
-  };
-
-  useEffect(() => {
-    const getUsersInfo = async () => {
-      const response = await getUsers();
-      setRows(response.data.userLists);
-    };
-
-    getUsersInfo();
-  }, []);
 
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
@@ -194,122 +182,124 @@ const UserTableRow = () => {
             const labelId = `table-checkbox-${index}`;
 
             return (
-              <TableRow
-                hover
-                onClick={(event) => handleClick(event, row.userId)}
-                role="checkbox"
-                aria-checked={isItemSelected}
-                tabIndex={-1}
-                key={row.userId}
-                selected={isItemSelected}
-              >
-                <TableCell padding="checkbox">
-                  <CustomCheckbox
-                    color="primary"
-                    checked={isItemSelected}
-                    inputProps={{
-                      "aria-labelledby": labelId,
-                    }}
-                  />
-                </TableCell>
-
-                <TableCell>
-                  <Box display="flex" alignItems="center">
-                    <Tooltip
-                      title={
-                        row.activeStatus === 0
-                          ? "오프라인"
-                          : row.activeStatus === 1
-                          ? "온라인"
-                          : "자리비움"
-                      }
-                      arrow
-                    >
-                      <Badge
-                        overlap="circular"
-                        anchorOrigin={{
-                          vertical: "bottom",
-                          horizontal: "right",
-                        }}
-                        color={row.activeStatus === 1 ? "success" : "warning"}
-                        sx={{
-                          "& .MuiBadge-badge": {
-                            backgroundColor:
-                              row.activeStatus === 0 ? grey[500] : "",
-                          },
-                        }}
-                        badgeContent=" "
-                      >
-                        <Avatar
-                          src={`data:image/jpeg;base64,${row.profileImage}`}
-                          alt={`${row.userName} 프로필 이미지`}
-                          sx={{ width: 56, height: 56 }}
-                        />
-                      </Badge>
-                    </Tooltip>
-                    <Box
-                      sx={{
-                        ml: 2,
+              <TableBody>
+                <TableRow
+                  hover
+                  onClick={(event) => handleClick(event, row.userId)}
+                  role="checkbox"
+                  aria-checked={isItemSelected}
+                  tabIndex={-1}
+                  key={row.userId}
+                  selected={isItemSelected}
+                >
+                  <TableCell padding="checkbox">
+                    <CustomCheckbox
+                      color="primary"
+                      checked={isItemSelected}
+                      inputProps={{
+                        "aria-labelledby": labelId,
                       }}
-                    >
-                      <Typography variant="h6" fontWeight="600">
-                        {row.userName}
-                      </Typography>
+                    />
+                  </TableCell>
 
-                      <Typography color="textSecondary" variant="subtitle2">
-                        {row.roleLabel}
-                      </Typography>
+                  <TableCell>
+                    <Box display="flex" alignItems="center">
+                      <Tooltip
+                        title={
+                          row.activeStatus === 0
+                            ? "오프라인"
+                            : row.activeStatus === 1
+                            ? "온라인"
+                            : "자리비움"
+                        }
+                        arrow
+                      >
+                        <Badge
+                          overlap="circular"
+                          anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "right",
+                          }}
+                          color={row.activeStatus === 1 ? "success" : "warning"}
+                          sx={{
+                            "& .MuiBadge-badge": {
+                              backgroundColor:
+                                row.activeStatus === 0 ? grey[500] : "",
+                            },
+                          }}
+                          badgeContent=" "
+                        >
+                          <Avatar
+                            src={`data:image/jpeg;base64,${row.profileImage}`}
+                            alt={`${row.userName} 프로필 이미지`}
+                            sx={{ width: 56, height: 56 }}
+                          />
+                        </Badge>
+                      </Tooltip>
+                      <Box
+                        sx={{
+                          ml: 2,
+                        }}
+                      >
+                        <Typography variant="h6" fontWeight="600">
+                          {row.userName}
+                        </Typography>
+
+                        <Typography color="textSecondary" variant="subtitle2">
+                          {row.roleLabel}
+                        </Typography>
+                      </Box>
                     </Box>
-                  </Box>
-                </TableCell>
+                  </TableCell>
 
-                <TableCell>
-                  <Typography variant="subtitle2">{row.userId}</Typography>
-                </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2">{row.userId}</Typography>
+                  </TableCell>
 
-                <TableCell>
-                  <Typography>
-                    {dayjs(new Date(row.createdAt as string)).format(
-                      "YYYY. MM. DD"
-                    )}
-                  </Typography>
-                </TableCell>
+                  <TableCell>
+                    <Typography>
+                      {dayjs(new Date(row.createdAt as string)).format(
+                        "YYYY. MM. DD"
+                      )}
+                    </Typography>
+                  </TableCell>
 
-                <TableCell>
-                  <Switch
-                    id="userIsUse"
-                    name="isUse"
-                    checked={row.isUse}
-                    onChange={(event) => handleChangeIsUse(event, row.userId)}
-                    onClick={(event) => event.stopPropagation()}
-                  />
-                </TableCell>
+                  <TableCell>
+                    <Switch
+                      id="userIsUse"
+                      name="isUse"
+                      checked={row.isUse}
+                      onChange={(event) => handleChangeIsUse(event, row.userId)}
+                      onClick={(event) => event.stopPropagation()}
+                    />
+                  </TableCell>
 
-                <TableCell>
-                  <Switch
-                    id="userIsPossAssign"
-                    name="isPossAssign"
-                    checked={row.isPossAssign}
-                    onChange={(event) =>
-                      handleChangeIsPossAssign(event, row.userId)
-                    }
-                    onClick={(event) => event.stopPropagation()}
-                  />
-                </TableCell>
-
-                <TableCell width={60}>
-                  <Tooltip title="사용자 설정">
-                    <IconButton
-                      size="small"
-                      onClick={(event) =>
-                        handleUserSettingsOpen(event, row.userId)
+                  <TableCell>
+                    <Switch
+                      id="userIsPossAssign"
+                      name="isPossAssign"
+                      checked={row.isPossAssign}
+                      onChange={(event) =>
+                        handleChangeIsPossAssign(event, row.userId)
                       }
-                    >
-                      <IconDotsVertical size="1.1rem" />
-                    </IconButton>
-                  </Tooltip>
-                </TableCell>
-              </TableRow>
+                      onClick={(event) => event.stopPropagation()}
+                    />
+                  </TableCell>
+
+                  <TableCell width={60}>
+                    <Tooltip title="사용자 설정">
+                      <IconButton
+                        size="small"
+                        onClick={(event) =>
+                          handleUserSettingsOpen(event, row.userId)
+                        }
+                      >
+                        <IconDotsVertical size="1.1rem" />
+                      </IconButton>
+                    </Tooltip>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
             );
           })
       ) : (

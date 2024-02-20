@@ -67,7 +67,7 @@ const ReceiptsCard = () => {
                 sx={{ position: "sticky", top: "-2px", zIndex: 10 }}
               >
                 <Box display="flex" alignItems="center" gap={1}>
-                  <Typography variant="subtitle2">9024589781{i}</Typography>
+                  <Typography variant="body2">9024589781{i}</Typography>
                   <Chip label={2 * i} variant="outlined" size="small" />
                 </Box>
               </AccordionSummary>
@@ -262,6 +262,7 @@ const CustomAccordion = styled(Accordion)<AccordionProps>(({ theme }) => ({
     borderBottom: `2px solid ${theme.palette.primary.main}`,
     // borderRadius: "8px 8px 0 0",
     backgroundColor: `${theme.palette.primary.light}`,
+    minHeight: "40px",
   },
   "& .MuiAccordionDetails-root": {
     border: `2px solid ${theme.palette.primary.main}`,
@@ -275,6 +276,13 @@ const CustomAccordion = styled(Accordion)<AccordionProps>(({ theme }) => ({
     borderTop: 0,
     borderRadius: "0 0 8px 8px",
     backgroundColor: `${theme.palette.primary.light}`,
+  },
+  "& .MuiAccordionSummary-root": {
+    minHeight: "40px",
+
+    "& .MuiAccordionSummary-content": {
+      margin: 0,
+    },
   },
 }));
 

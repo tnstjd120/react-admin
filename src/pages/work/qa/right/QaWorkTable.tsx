@@ -1,15 +1,16 @@
-import CustomTable from "@/components/table/CustomTable";
 import CustomTableHead from "@/components/table/CustomTableHead";
 import {
   Box,
   Paper,
   Table,
-  TableBody,
   TableContainer,
   Typography,
   useTheme,
 } from "@mui/material";
-import QaWorkTableRow from "./QaWorkTableRow";
+import QaWorkTableBody from "./QaWorkTableBody";
+import { DragDropContext, OnDragEndResponder } from "@hello-pangea/dnd";
+import { useTableStore } from "@/store/useTableStore";
+import { useEffect } from "react";
 
 export interface HeadCellType {
   id: string;
@@ -24,14 +25,14 @@ const QaWorkTable = () => {
 
   const headCells = [
     {
-      id: "treatment",
-      label: "항목명",
+      id: "treatmentCode",
+      label: "항목코드",
       numeric: false,
       useSortable: true,
     },
     {
-      id: "treatmentCode",
-      label: "항목코드",
+      id: "treatment",
+      label: "항목명",
       numeric: false,
       useSortable: true,
     },
@@ -91,21 +92,186 @@ const QaWorkTable = () => {
       numeric: false,
       useSortable: true,
     },
+    {
+      id: "non_benefit",
+      label: "비급여",
+      numeric: false,
+      useSortable: true,
+    },
+    {
+      id: "all_selfpay",
+      label: "전액본인부담금",
+      numeric: false,
+      useSortable: true,
+    },
   ];
 
+  const { initializeTable, rows, setRows } = useTableStore((state) => state);
+
+  useEffect(() => {
+    initializeTable([
+      {
+        qaDataId: 0,
+        imageId: 0,
+        imageName: "string",
+        isMapping: true,
+        isMultiMapping: true,
+        clmInfoSeqNo: [0],
+        dateFrom: "string",
+        isStandardEdi: true,
+        treatmentCode: "string",
+        treatment: "string",
+        dateTo: "string",
+        ediCode: "string",
+        ediName: "string",
+        inferenceEdiName: "string",
+        price: 0,
+        cnt: 0,
+        term: 0,
+        total_price: 0,
+        all_selfpay: 0,
+        non_benefit: 0,
+      },
+      {
+        qaDataId: 1,
+        imageId: 0,
+        imageName: "string",
+        isMapping: true,
+        isMultiMapping: true,
+        clmInfoSeqNo: [0],
+        dateFrom: "string",
+        isStandardEdi: true,
+        treatmentCode: "string",
+        treatment: "string",
+        dateTo: "string",
+        ediCode: "string",
+        ediName: "string",
+        inferenceEdiName: "string",
+        price: 0,
+        cnt: 0,
+        term: 0,
+        total_price: 0,
+        all_selfpay: 0,
+        non_benefit: 0,
+      },
+      {
+        qaDataId: 2,
+        imageId: 0,
+        imageName: "string",
+        isMapping: true,
+        isMultiMapping: true,
+        clmInfoSeqNo: [0],
+        dateFrom: "string",
+        isStandardEdi: true,
+        treatmentCode: "string",
+        treatment: "string",
+        dateTo: "string",
+        ediCode: "string",
+        ediName: "string",
+        inferenceEdiName: "string",
+        price: 0,
+        cnt: 0,
+        term: 0,
+        total_price: 0,
+        all_selfpay: 0,
+        non_benefit: 0,
+      },
+      {
+        qaDataId: 3,
+        imageId: 0,
+        imageName: "string",
+        isMapping: true,
+        isMultiMapping: true,
+        clmInfoSeqNo: [0],
+        dateFrom: "string",
+        isStandardEdi: true,
+        treatmentCode: "string",
+        treatment: "string",
+        dateTo: "string",
+        ediCode: "string",
+        ediName: "string",
+        inferenceEdiName: "string",
+        price: 0,
+        cnt: 0,
+        term: 0,
+        total_price: 0,
+        all_selfpay: 0,
+        non_benefit: 0,
+      },
+      {
+        qaDataId: 4,
+        imageId: 0,
+        imageName: "string",
+        isMapping: true,
+        isMultiMapping: true,
+        clmInfoSeqNo: [0],
+        dateFrom: "string",
+        isStandardEdi: true,
+        treatmentCode: "string",
+        treatment: "string",
+        dateTo: "string",
+        ediCode: "string",
+        ediName: "string",
+        inferenceEdiName: "string",
+        price: 0,
+        cnt: 0,
+        term: 0,
+        total_price: 0,
+        all_selfpay: 0,
+        non_benefit: 0,
+      },
+      {
+        qaDataId: 5,
+        imageId: 0,
+        imageName: "string",
+        isMapping: true,
+        isMultiMapping: true,
+        clmInfoSeqNo: [0],
+        dateFrom: "string",
+        isStandardEdi: true,
+        treatmentCode: "string",
+        treatment: "string",
+        dateTo: "string",
+        ediCode: "string",
+        ediName: "string",
+        inferenceEdiName: "string",
+        price: 0,
+        cnt: 0,
+        term: 0,
+        total_price: 0,
+        all_selfpay: 0,
+        non_benefit: 0,
+      },
+    ]);
+  }, []);
+
+  const handleDragEnd: OnDragEndResponder = (e) => {
+    if (!e.destination) return;
+
+    let tempData = Array.from(rows);
+    let [source_data] = tempData.splice(e.source.index, 1);
+    tempData.splice(e.destination.index, 0, source_data);
+    setRows(tempData);
+  };
+
   return (
-    <CustomTable>
-      <Paper variant="outlined">
+    <DragDropContext onDragEnd={handleDragEnd}>
+      <Paper sx={{ minWidth: 1700, borderRadius: 0 }} variant="outlined">
         <TableContainer>
-          <Table>
-            <CustomTableHead headCells={headCells} />
-            <TableBody>
-              <QaWorkTableRow />
-            </TableBody>
+          <Table sx={{ position: "relative" }}>
+            <CustomTableHead
+              headCells={headCells}
+              mainKey="qaDataId"
+              sticky
+              isCheckedHead
+              isDragHead
+            />
+
+            <QaWorkTableBody />
           </Table>
         </TableContainer>
       </Paper>
-    </CustomTable>
+    </DragDropContext>
   );
 };
 

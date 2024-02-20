@@ -10,7 +10,7 @@ import { styled, useTheme } from "@mui/material/styles";
 import { isNull } from "lodash";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import { useLocation } from "react-router-dom";
-import { useStylesState } from "@/store/useStylesState";
+import { useStylesState } from "@/store/useStylesStore";
 
 type NavGroupProps = {
   [x: string]: any;

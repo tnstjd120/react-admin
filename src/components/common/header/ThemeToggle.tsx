@@ -2,7 +2,7 @@ import { Button, ButtonGroup } from "@mui/material";
 
 import WbSunnyTwoToneIcon from "@mui/icons-material/WbSunnyTwoTone";
 import DarkModeTwoToneIcon from "@mui/icons-material/DarkModeTwoTone";
-import { ActiveModeType, useStylesState } from "@/store/useStylesState";
+import { ActiveModeType, useStylesState } from "@/store/useStylesStore";
 
 const ThemeToggle = () => {
   const { activeMode, setActiveMode } = useStylesState((state) => state);

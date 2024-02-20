@@ -6,7 +6,7 @@ import NavItem from "./NavItem";
 import NavCollapse from "./NavCollapse";
 import NavGroup from "./NavGroup/NavGroup";
 import { useLocation } from "react-router-dom";
-import { useStylesState } from "@/store/useStylesState";
+import { useStylesState } from "@/store/useStylesStore";
 
 const SidebarItems = () => {
   const location = useLocation();

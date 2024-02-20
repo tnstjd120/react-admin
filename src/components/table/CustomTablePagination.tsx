@@ -5,19 +5,20 @@ import {
   TablePaginationProps,
   useTheme,
 } from "@mui/material";
-import { useTableContext } from "./TableContext";
 import {
   FirstPage,
   KeyboardArrowLeft,
   KeyboardArrowRight,
   LastPage,
 } from "@mui/icons-material";
+import { useTableStore } from "@/store/useTableStore";
 
 const CustomTablePagination = (
   props: Pick<TablePaginationProps, "rowsPerPageOptions">
 ) => {
-  const { rows, rowsPerPage, setRowsPerPage, page, setPage } =
-    useTableContext();
+  const { rows, rowsPerPage, setRowsPerPage, page, setPage } = useTableStore(
+    (state) => state
+  );
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);

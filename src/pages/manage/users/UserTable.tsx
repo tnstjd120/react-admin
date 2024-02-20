@@ -1,21 +1,41 @@
-import CustomTable from "@/components/table/CustomTable";
 import CustomTableHead, {
   HeadCellType,
 } from "@/components/table/CustomTableHead";
 import CustomTablePagination from "@/components/table/CustomTablePagination";
 import CustomTableToolbar from "@/components/table/CustomTableToolbar";
 import {
+  Box,
   Paper,
   Table,
   TableBody,
   TableContainer,
   useTheme,
 } from "@mui/material";
-import UserTableRow from "./UserTableRow";
+import UserTableBody from "./UserTableBody";
+import { useTableStore } from "@/store/useTableStore";
+import { API_PATH } from "@/api/API_PATH";
+import { api } from "@/api/axios";
+import { useEffect } from "react";
 
 const UserTable = () => {
   const theme = useTheme();
   const borderColor = theme.palette.divider;
+
+  const getUsers = async () => {
+    const { PATH, METHOD } = API_PATH.USERS.USERS_INFO_GET;
+    return await api(PATH, METHOD);
+  };
+
+  const { initializeTable } = useTableStore((state) => state);
+
+  useEffect(() => {
+    const getUsersInfo = async () => {
+      const response = await getUsers();
+      initializeTable(response.data.userLists);
+    };
+
+    getUsersInfo();
+  }, []);
 
   const headCells: readonly HeadCellType[] = [
     {
@@ -57,7 +77,7 @@ const UserTable = () => {
   ];
 
   return (
-    <CustomTable>
+    <Box>
       <CustomTableToolbar />
 
       <Paper
@@ -66,11 +86,13 @@ const UserTable = () => {
       >
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
-            <CustomTableHead headCells={headCells} />
+            <CustomTableHead
+              headCells={headCells}
+              mainKey="userId"
+              isCheckedHead
+            />
 
-            <TableBody>
-              <UserTableRow />
-            </TableBody>
+            <UserTableBody />
           </Table>
         </TableContainer>
 
@@ -78,7 +100,7 @@ const UserTable = () => {
           rowsPerPageOptions={[1, 2, 3, 10, 20, 30, 40, 50]}
         />
       </Paper>
-    </CustomTable>
+    </Box>
   );
 };
 

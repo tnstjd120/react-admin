@@ -13,7 +13,7 @@ import { ChangeEventHandler, FormEventHandler, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import axios, { AxiosError } from "axios";
-import { useUserState } from "@/store/useUserState";
+import { useUserState } from "@/store/useUserStore";
 import { setCookie } from "@/utils/cookie";
 import { API_PATH } from "@/api/API_PATH";
 

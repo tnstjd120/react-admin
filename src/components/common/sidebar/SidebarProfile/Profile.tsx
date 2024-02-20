@@ -1,6 +1,6 @@
 import { logout } from "@/auth/logout";
-import { useStylesState } from "@/store/useStylesState";
-import { useUserState } from "@/store/useUserState";
+import { useStylesState } from "@/store/useStylesStore";
+import { useUserState } from "@/store/useUserStore";
 import {
   Box,
   Avatar,

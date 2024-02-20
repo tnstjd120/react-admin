@@ -3,8 +3,8 @@ import { api } from "@/api/axios";
 import { checkAuth } from "@/auth/checkAuth";
 import Layout from "@/components/common/Layout";
 import Loading from "@/components/common/Loading";
-import { useRoleState } from "@/store/useRoleState";
-import { useUserState } from "@/store/useUserState";
+import { useRoleState } from "@/store/useRoleStore";
+import { useUserState } from "@/store/useUserStore";
 import { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 

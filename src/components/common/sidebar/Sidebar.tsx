@@ -4,7 +4,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import SidebarItems from "./SidebarItems";
 import { Profile } from "./SidebarProfile/Profile";
-import { useStylesState } from "@/store/useStylesState";
+import { useStylesState } from "@/store/useStylesStore";
 import Scrollbar from "../Scrollbar";
 import { useEffect } from "react";
 import Logo from "../Logo";

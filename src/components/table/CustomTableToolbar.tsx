@@ -11,12 +11,14 @@ import {
   styled,
 } from "@mui/material";
 import { IconDotsVertical, IconFilter, IconSearch } from "@tabler/icons-react";
-import { useTableContext } from "./TableContext";
 import { ChangeEventHandler } from "react";
 import { UserInfoResponse } from "@/types/User";
+import { useTableStore } from "@/store/useTableStore";
 
 const CustomTableToolbar = () => {
-  const { rows, setRows, selected, search, setSearch } = useTableContext();
+  const { rows, setRows, selected, search, setSearch } = useTableStore(
+    (state) => state
+  );
 
   const handleSearch: ChangeEventHandler<HTMLInputElement> = (event) => {
     const filteredRows: UserInfoResponse[] = rows.filter(

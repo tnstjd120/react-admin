@@ -6,7 +6,7 @@ type CustomTypographyProps = {
 } & TypographyProps;
 
 export const CustomFormLabel = (props: CustomTypographyProps) => (
-  <CustomFormLabelWrapper
+  <CustomFormLabelContainer
     component="label"
     variant="subtitle1"
     fontWeight={600}
@@ -14,7 +14,7 @@ export const CustomFormLabel = (props: CustomTypographyProps) => (
   />
 );
 
-const CustomFormLabelWrapper = styled(Typography)`
+const CustomFormLabelContainer = styled(Typography)`
   margin-bottom: 5px;
   margin-top: 25px;
   display: block;

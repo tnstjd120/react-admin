@@ -1,4 +1,4 @@
-import { useStylesState } from "@/store/useStylesState";
+import { useStylesState } from "@/store/useStylesStore";
 import { styled } from "@mui/material/styles";
 import { Link } from "react-router-dom";
 

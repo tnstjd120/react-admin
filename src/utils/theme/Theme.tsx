@@ -8,7 +8,7 @@ import { DarkThemeColors } from "./DarkThemeColors";
 import { LightThemeColors } from "./LightThemeColors";
 import { baseDarkTheme, baselightTheme } from "./DefaultColors";
 import * as locales from "@mui/material/locale";
-import { useStylesState } from "@/store/useStylesState";
+import { useStylesState } from "@/store/useStylesStore";
 
 export const BuildTheme = (config: any = {}) => {
   const themeOptions = LightThemeColors.find(

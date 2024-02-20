@@ -11,7 +11,7 @@ import {
 import * as dropdownData from "./data";
 
 import { Stack } from "@mui/system";
-import { useUserState } from "@/store/useUserState";
+import { useUserState } from "@/store/useUserStore";
 import { logout } from "@/auth/logout";
 import { Link } from "react-router-dom";
 

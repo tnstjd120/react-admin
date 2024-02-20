@@ -20,13 +20,14 @@ import dayjs from "dayjs";
 import { ChangeEvent, MouseEvent, useEffect, useState } from "react";
 import { IconDotsVertical } from "@tabler/icons-react";
 import { UserInfoResponse } from "@/types/User";
-import { Order, useTableContext } from "./TableContext";
+import { Order } from "./TableContext";
 import CustomTableSkeleton from "./CustomTableSkeleton";
 import { API_PATH } from "@/api/API_PATH";
 import { api } from "@/api/axios";
 import UserDrawer from "@/pages/manage/users/UserDrawer";
-import { useRoleState } from "@/store/useRoleState";
+import { useRoleState } from "@/store/useRoleStore";
 import CustomCheckbox from "../form/CustomCheckbox";
+import { useTableStore } from "@/store/useTableStore";
 
 const CustomTableRow = () => {
   const {
@@ -38,7 +39,7 @@ const CustomTableRow = () => {
     orderBy,
     selected,
     setSelected,
-  } = useTableContext();
+  } = useTableStore((state) => state);
 
   const roles = useRoleState((state) => state.roles);
 
