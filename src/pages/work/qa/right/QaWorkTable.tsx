@@ -1,12 +1,5 @@
 import CustomTableHead from "@/components/table/CustomTableHead";
-import {
-  Box,
-  Paper,
-  Table,
-  TableContainer,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { Box, Paper, Table, TableContainer, Typography } from "@mui/material";
 import QaWorkTableBody from "./QaWorkTableBody";
 import { DragDropContext, OnDragEndResponder } from "@hello-pangea/dnd";
 import { useTableStore } from "@/store/useTableStore";
@@ -20,21 +13,18 @@ export interface HeadCellType {
 }
 
 const QaWorkTable = () => {
-  const theme = useTheme();
-  const borderColor = theme.palette.divider;
-
   const headCells = [
     {
       id: "treatmentCode",
       label: "항목코드",
       numeric: false,
-      useSortable: true,
+      useSortable: false,
     },
     {
       id: "treatment",
       label: "항목명",
       numeric: false,
-      useSortable: true,
+      useSortable: false,
     },
     {
       id: "dateFrom",
@@ -44,7 +34,7 @@ const QaWorkTable = () => {
         </Box>
       ),
       numeric: false,
-      useSortable: true,
+      useSortable: false,
     },
     {
       id: "dateTo",
@@ -54,55 +44,55 @@ const QaWorkTable = () => {
         </Box>
       ),
       numeric: false,
-      useSortable: true,
+      useSortable: false,
     },
     {
       id: "ediCode",
       label: "EDI 코드",
       numeric: false,
-      useSortable: true,
+      useSortable: false,
     },
     {
       id: "ediName",
       label: "EDI 명칭",
       numeric: false,
-      useSortable: true,
+      useSortable: false,
     },
     {
       id: "price",
       label: "단가",
       numeric: false,
-      useSortable: true,
+      useSortable: false,
     },
     {
       id: "cnt",
       label: "횟수",
       numeric: false,
-      useSortable: true,
+      useSortable: false,
     },
     {
       id: "term",
       label: "일수",
       numeric: false,
-      useSortable: true,
+      useSortable: false,
     },
     {
       id: "total_price",
       label: "총액",
       numeric: false,
-      useSortable: true,
+      useSortable: false,
     },
     {
       id: "non_benefit",
       label: "비급여",
       numeric: false,
-      useSortable: true,
+      useSortable: false,
     },
     {
       id: "all_selfpay",
       label: "전액본인부담금",
       numeric: false,
-      useSortable: true,
+      useSortable: false,
     },
   ];
 
@@ -128,9 +118,9 @@ const QaWorkTable = () => {
         price: 0,
         cnt: 0,
         term: 0,
-        total_price: 0,
-        all_selfpay: 0,
-        non_benefit: 0,
+        total_price: 1111111,
+        all_selfpay: 2222222,
+        non_benefit: 3333333,
       },
       {
         qaDataId: 1,
@@ -150,9 +140,9 @@ const QaWorkTable = () => {
         price: 0,
         cnt: 0,
         term: 0,
-        total_price: 0,
-        all_selfpay: 0,
-        non_benefit: 0,
+        total_price: 1111111,
+        all_selfpay: 2222222,
+        non_benefit: 3333333,
       },
       {
         qaDataId: 2,
@@ -172,9 +162,9 @@ const QaWorkTable = () => {
         price: 0,
         cnt: 0,
         term: 0,
-        total_price: 0,
-        all_selfpay: 0,
-        non_benefit: 0,
+        total_price: 1111111,
+        all_selfpay: 2222222,
+        non_benefit: 3333333,
       },
       {
         qaDataId: 3,
@@ -194,9 +184,9 @@ const QaWorkTable = () => {
         price: 0,
         cnt: 0,
         term: 0,
-        total_price: 0,
-        all_selfpay: 0,
-        non_benefit: 0,
+        total_price: 1111111,
+        all_selfpay: 2222222,
+        non_benefit: 3333333,
       },
       {
         qaDataId: 4,
@@ -216,9 +206,9 @@ const QaWorkTable = () => {
         price: 0,
         cnt: 0,
         term: 0,
-        total_price: 0,
-        all_selfpay: 0,
-        non_benefit: 0,
+        total_price: 1111111,
+        all_selfpay: 2222222,
+        non_benefit: 3333333,
       },
       {
         qaDataId: 5,
@@ -238,9 +228,9 @@ const QaWorkTable = () => {
         price: 0,
         cnt: 0,
         term: 0,
-        total_price: 0,
-        all_selfpay: 0,
-        non_benefit: 0,
+        total_price: 1111111,
+        all_selfpay: 2222222,
+        non_benefit: 3333333,
       },
     ]);
   }, []);
@@ -257,12 +247,11 @@ const QaWorkTable = () => {
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
       <Paper sx={{ minWidth: 1700, borderRadius: 0 }} variant="outlined">
-        <TableContainer>
-          <Table sx={{ position: "relative" }}>
+        <TableContainer sx={{ overflow: "visible" }}>
+          <Table stickyHeader>
             <CustomTableHead
               headCells={headCells}
               mainKey="qaDataId"
-              sticky
               isCheckedHead
               isDragHead
             />

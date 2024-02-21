@@ -1,13 +1,18 @@
 import {
   Box,
+  Popover,
+  Stack,
   TableCell,
   TableHead,
   TableRow,
   TableSortLabel,
+  Typography,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import CustomCheckbox from "../form/CustomCheckbox";
 import { useTableStore } from "@/store/useTableStore";
+import { MouseEvent, useState } from "react";
+import { formatNumberWithComma, formatNumberWithUncomma } from "@/utils/comma";
 
 export interface HeadCellType {
   id: string;
@@ -19,7 +24,6 @@ export interface HeadCellType {
 type Props = {
   headCells: readonly HeadCellType[];
   mainKey: string;
-  sticky: boolean;
   isCheckedHead?: boolean;
   isDragHead?: boolean;
 };
@@ -27,12 +31,22 @@ type Props = {
 const CustomTableHead = ({
   headCells,
   mainKey,
-  sticky = false,
   isCheckedHead = false,
   isDragHead = false,
 }: Props) => {
   const { selected, order, setOrder, orderBy, setOrderBy, rows, setSelected } =
     useTableStore((state) => state);
+
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const popOverOpen = Boolean(anchorEl);
+  const handlePopoverOpen = (event: MouseEvent<HTMLElement>) => {
+    console.log(event.currentTarget);
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -58,7 +72,7 @@ const CustomTableHead = ({
     };
 
   return (
-    <TableHead sx={{ position: sticky ? "sticky" : "static", top: 0 }}>
+    <TableHead>
       <TableRow>
         {isDragHead && <TableCell padding="normal"></TableCell>}
 
@@ -79,30 +93,78 @@ const CustomTableHead = ({
           <TableCell
             key={headCell.id}
             align={headCell.numeric ? "right" : "left"}
-            padding={"normal"}
             sortDirection={orderBy === headCell.id ? order : false}
+            sx={{ padding: "2px 8px" }}
           >
-            {headCell.useSortable ? (
-              <TableSortLabel
-                active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : "asc"}
-                onClick={createSortHandler(headCell.id)}
-              >
-                {headCell.label}
-                {orderBy === headCell.id ? (
-                  <Box component="span" sx={visuallyHidden}>
-                    {order === "desc"
-                      ? "sorted descending"
-                      : "sorted ascending"}
-                  </Box>
-                ) : null}
-              </TableSortLabel>
-            ) : (
-              headCell.label
-            )}
+            <Stack direction="row">
+              {headCell.useSortable ? (
+                <TableSortLabel
+                  active={orderBy === headCell.id}
+                  direction={orderBy === headCell.id ? order : "asc"}
+                  onClick={createSortHandler(headCell.id)}
+                >
+                  <Stack>
+                    <Typography variant="caption">{headCell.label}</Typography>
+
+                    {["total_price", "all_selfpay", "non_benefit"].includes(
+                      headCell.id
+                    ) && (
+                      <Typography variant="caption" fontWeight="bold">
+                        {formatNumberWithComma(
+                          rows.reduce((acc, cur) => {
+                            return (acc += formatNumberWithUncomma(
+                              String(cur[headCell.id])
+                            ));
+                          }, 0)
+                        )}
+                      </Typography>
+                    )}
+                  </Stack>
+                </TableSortLabel>
+              ) : (
+                <Stack>
+                  <Typography variant="caption">{headCell.label}</Typography>
+
+                  {["total_price", "all_selfpay", "non_benefit"].includes(
+                    headCell.id
+                  ) && (
+                    <Typography variant="caption" fontWeight="bold">
+                      {formatNumberWithComma(
+                        rows.reduce((acc, cur) => {
+                          return (acc += formatNumberWithUncomma(
+                            String(cur[headCell.id])
+                          ));
+                        }, 0)
+                      )}
+                    </Typography>
+                  )}
+                </Stack>
+              )}
+            </Stack>
           </TableCell>
         ))}
       </TableRow>
+
+      <Popover
+        id="mouse-over-popover"
+        sx={{
+          pointerEvents: "none",
+        }}
+        open={popOverOpen}
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+        onClose={handlePopoverClose}
+        disableRestoreFocus
+      >
+        <Typography sx={{ p: 1 }}>총액: 255,555,555</Typography>
+      </Popover>
     </TableHead>
   );
 };

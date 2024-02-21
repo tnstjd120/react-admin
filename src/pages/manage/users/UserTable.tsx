@@ -85,7 +85,7 @@ const UserTable = () => {
         sx={{ mx: 2, mt: 1, mb: 2, border: `1px solid ${borderColor}` }}
       >
         <TableContainer>
-          <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
+          <Table stickyHeader sx={{ minWidth: 750 }}>
             <CustomTableHead
               headCells={headCells}
               mainKey="userId"

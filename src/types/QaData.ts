@@ -2,11 +2,11 @@ export interface IQaData {
   qaDataId: number;
   imageId: number;
   imageName: string;
-  isMapping: true;
-  isMultiMapping: true;
+  isMapping: boolean;
+  isMultiMapping: boolean;
   clmInfoSeqNo: number[];
   dateFrom: string;
-  isStandardEdi: true;
+  isStandardEdi: boolean;
   treatmentCode: string;
   treatment: string;
   dateTo: string;

@@ -19,7 +19,7 @@ const RightCard = () => {
 
         <CustomReflexSplitter />
 
-        <ReflexElement style={{ overflow: "auto" }} flex={0.2}>
+        <ReflexElement flex={0.2}>
           <QaWorkTable />
         </ReflexElement>
       </ReflexContainer>
