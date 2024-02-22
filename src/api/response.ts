@@ -1,4 +1,4 @@
-// import { useUserState } from "@/store/userStore";
+// import { useUserStore } from "@/store/userStore";
 // import { api } from "./axios";
 // import axios from "axios";
 // import { getCookie, setCookie } from "@/utils/cookie";
@@ -12,7 +12,7 @@
 //     if (error.response.status === 401 && !originalRequest._retry) {
 //       originalRequest._retry = true;
 
-//       const { user } = useUserState.getState();
+//       const { user } = useUserStore.getState();
 
 //       const silentResponse: UserSilentRefreshResponse = await axios.post(
 //         `${import.meta.env.BASE_URL}/api/users/refresh_token`,

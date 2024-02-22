@@ -11,12 +11,12 @@ import {
 import * as dropdownData from "./data";
 
 import { Stack } from "@mui/system";
-import { useUserState } from "@/store/useUserStore";
+import { useUserStore } from "@/store/useUserStore";
 import { logout } from "@/auth/logout";
 import { Link } from "react-router-dom";
 
 const Profile = () => {
-  const me = useUserState((state) => state.user);
+  const me = useUserStore((state) => state.user);
 
   const [anchorEl2, setAnchorEl2] = useState(null);
   const handleClick2 = (event: any) => {

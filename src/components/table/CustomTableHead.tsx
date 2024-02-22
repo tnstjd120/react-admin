@@ -1,5 +1,4 @@
 import {
-  Box,
   Popover,
   Stack,
   TableCell,
@@ -8,7 +7,6 @@ import {
   TableSortLabel,
   Typography,
 } from "@mui/material";
-import { visuallyHidden } from "@mui/utils";
 import CustomCheckbox from "../form/CustomCheckbox";
 import { useTableStore } from "@/store/useTableStore";
 import { MouseEvent, useState } from "react";

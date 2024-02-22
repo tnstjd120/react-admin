@@ -2,8 +2,11 @@ import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import { BrowserRouter } from "react-router-dom";
 
-import "./assets/fonts.css";
 import { SnackbarProvider } from "notistack";
+
+import "./assets/fonts.css";
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 
 const enableMocking = async () => {
   return;

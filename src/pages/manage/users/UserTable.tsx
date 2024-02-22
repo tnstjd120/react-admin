@@ -3,14 +3,7 @@ import CustomTableHead, {
 } from "@/components/table/CustomTableHead";
 import CustomTablePagination from "@/components/table/CustomTablePagination";
 import CustomTableToolbar from "@/components/table/CustomTableToolbar";
-import {
-  Box,
-  Paper,
-  Table,
-  TableBody,
-  TableContainer,
-  useTheme,
-} from "@mui/material";
+import { Box, Paper, Table, TableContainer, useTheme } from "@mui/material";
 import UserTableBody from "./UserTableBody";
 import { useTableStore } from "@/store/useTableStore";
 import { API_PATH } from "@/api/API_PATH";

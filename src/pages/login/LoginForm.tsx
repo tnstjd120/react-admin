@@ -13,7 +13,7 @@ import { ChangeEventHandler, FormEventHandler, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import axios, { AxiosError } from "axios";
-import { useUserState } from "@/store/useUserStore";
+import { useUserStore } from "@/store/useUserStore";
 import { setCookie } from "@/utils/cookie";
 import { API_PATH } from "@/api/API_PATH";
 
@@ -23,7 +23,7 @@ const LoginForm = () => {
   const [userPassword, setUserPassword] = useState("");
 
   const navigate = useNavigate();
-  const setUserInfo = useUserState((state) => state.setUserInfo);
+  const setUserInfo = useUserStore((state) => state.setUserInfo);
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();

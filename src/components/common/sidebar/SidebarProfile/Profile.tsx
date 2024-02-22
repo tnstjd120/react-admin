@@ -1,6 +1,6 @@
 import { logout } from "@/auth/logout";
 import { useStylesState } from "@/store/useStylesStore";
-import { useUserState } from "@/store/useUserStore";
+import { useUserStore } from "@/store/useUserStore";
 import {
   Box,
   Avatar,
@@ -16,7 +16,7 @@ export const Profile = () => {
   const lgUp = useMediaQuery((theme: Theme) => theme.breakpoints.up("lg"));
 
   const { isCollapse, isSidebarHover } = useStylesState((state) => state);
-  const me = useUserState((state) => state.user);
+  const me = useUserStore((state) => state.user);
 
   const hideMenu = lgUp ? isCollapse && !isSidebarHover : "";
 

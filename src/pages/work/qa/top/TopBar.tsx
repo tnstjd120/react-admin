@@ -1,8 +1,11 @@
-import { Card, FormControlLabel, Input, Switch } from "@mui/material";
-import { useQaWorkContext } from "../QaWorkContext";
+import { Card, FormControlLabel, Switch } from "@mui/material";
+import CustomDateRange from "@/components/form/CustomDateRange";
+import { useQaWorkStore } from "@/store/qaWork/useQaWorkStore";
 
 const TopBar = () => {
-  const { withImage, handleChangeWithImage } = useQaWorkContext();
+  const { withImage, setWithImage, setDateRange } = useQaWorkStore(
+    (state) => state
+  );
 
   return (
     <Card
@@ -14,13 +17,15 @@ const TopBar = () => {
         alignItems: "center",
       }}
     >
-      <Input type="date" />
+      <CustomDateRange
+        onChangeEndDateRange={(dateRange) => setDateRange(dateRange)}
+      />
 
       <FormControlLabel
         control={
           <Switch
             checked={withImage}
-            onChange={() => handleChangeWithImage(!withImage)}
+            onChange={() => setWithImage(!withImage)}
           />
         }
         label="With image"

@@ -17,32 +17,84 @@ import {
   styled,
   useTheme,
 } from "@mui/material";
+import { useQaWorkStore } from "@/store/qaWork/useQaWorkStore";
 import { IconChevronDown } from "@tabler/icons-react";
-import { ReactNode, SyntheticEvent, useState } from "react";
-import { useQaWorkContext } from "../QaWorkContext";
+import {
+  Fragment,
+  ReactNode,
+  SyntheticEvent,
+  useEffect,
+  useState,
+} from "react";
 
 import BlankCard from "@/components/common/BlankCard";
 import Scrollbar from "@/components/common/Scrollbar";
 import theme from "@/utils/theme";
+import { api } from "@/api/axios";
+import { API_PATH } from "@/api/API_PATH";
+import dayjs from "dayjs";
+import Loading from "@/components/common/Loading";
 
 const ReceiptsCard = () => {
-  const [expanded, setExpanded] = useState<string | false>(false);
+  const {
+    mappedColors,
+    withImage,
+    dateRange,
+    setReceiptsByDate,
+    receiptsByDate,
+    setCurrentReceipt,
+    currentReceipt,
+  } = useQaWorkStore((state) => state);
+
+  const [expanded, setExpanded] = useState<number | false>(false);
   const handleChangeReceipt =
-    (value: string) => (event: SyntheticEvent, isExpanded: boolean) => {
+    (value: number) => (event: SyntheticEvent, isExpanded: boolean) => {
       setExpanded(isExpanded ? value : false);
     };
-
-  // const [currentImage, setCurrentImage] = useState(null)
-  // const handleChangeCurrentImage = (imageUid: number) => {
-  //   setCurrentImage()
-  // }
 
   const [tabValue, setTabValue] = useState(0);
   const handleChangeTab = (event: SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
 
-  const { mappedColors, withImage } = useQaWorkContext();
+  useEffect(() => {
+    getReceipts();
+    setExpanded(false);
+  }, [dateRange, tabValue]);
+
+  const getReceipts = async () => {
+    const { PATH, METHOD } =
+      tabValue === 0
+        ? API_PATH.QA.RECEIPTS_INCOMPLETE_GET
+        : API_PATH.QA.RECEIPTS_COMPLETE_GET;
+
+    const response = await api(PATH, {
+      method: METHOD.method,
+      params: {
+        opDtFrom: String(dayjs(dateRange.startDate).format("YYYYMMDD")),
+        opDtTo: String(dayjs(dateRange.endDate).format("YYYYMMDD")),
+      },
+    });
+
+    console.log("response => ", response);
+
+    setReceiptsByDate(
+      tabValue === 0
+        ? response.data.inCompleteReceiptLists
+        : response.data.completeReceiptLists
+    );
+  };
+
+  const handleClickReceipt = (receiptId: number) => {
+    console.log("receiptId => ", receiptId);
+    console.log(
+      "Object.values(receiptsByDate) => ",
+      Object.values(receiptsByDate)
+    );
+    // setCurrentReceipt(Object.values(receiptsByDate));
+  };
+
+  const getImages = async (receiptId: string) => {};
 
   return (
     <ReceiptsCardContainer>
@@ -53,194 +105,214 @@ const ReceiptsCard = () => {
 
       <Divider />
 
-      <Scrollbar sx={{ height: "100%", pb: 8 }}>
-        {Array(20)
-          .fill(0)
-          .map((_, i) => (
-            <CustomAccordion
-              key={i}
-              expanded={expanded === `receipt${i}`}
-              onChange={handleChangeReceipt(`receipt${i}`)}
-            >
-              <AccordionSummary
-                expandIcon={<IconChevronDown />}
-                sx={{ position: "sticky", top: "-2px", zIndex: 10 }}
-              >
-                <Box display="flex" alignItems="center" gap={1}>
-                  <Typography variant="body2">9024589781{i}</Typography>
-                  <Chip label={2 * i} variant="outlined" size="small" />
-                </Box>
-              </AccordionSummary>
+      {receiptsByDate ? (
+        <Scrollbar sx={{ height: "100%", pb: 8 }}>
+          {Object.entries(receiptsByDate).map(([date, receipts]) => (
+            <Fragment key={date}>
+              <Typography variant="h6" textAlign="center" pt={3} pb={2} px={1}>
+                {date}
+              </Typography>
 
-              <AccordionDetails sx={{ p: withImage ? 2 : "0 !important" }}>
-                {withImage ? (
-                  <ImageList
-                    sx={{ width: "100%" }}
-                    cols={1}
-                    rowHeight={234}
-                    gap={16}
+              {receipts.map((receipt, i) => (
+                <CustomAccordion
+                  key={receipt.receiptId}
+                  expanded={expanded === receipt.receiptId}
+                  onChange={handleChangeReceipt(receipt.receiptId)}
+                >
+                  <AccordionSummary
+                    expandIcon={<IconChevronDown />}
+                    sx={{ position: "sticky", top: "-2px", zIndex: 10 }}
+                    onClick={() => handleClickReceipt(receipt.receiptId)}
                   >
-                    {Array(10)
-                      .fill(0)
-                      .map((_, j) => (
-                        <ImageListItem
-                          key={j}
-                          sx={{
-                            width: "100%",
-                            borderRadius: "8px",
-                            overflow: "hidden",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            backgroundColor:
-                              j === 2 ? theme.palette.primary.main : "white",
-                            p: 1,
-                          }}
-                        >
-                          {![6, 7, 10].includes(i) && (
-                            <MappedChip
-                              label={j}
-                              mappedColor={mappedColors[j]}
-                              position="absolute"
-                            />
-                          )}
+                    <Box display="flex" alignItems="center" gap={1}>
+                      <Typography variant="body2">{receipt.rcpNo}</Typography>
+                      <Chip
+                        label={receipts.length}
+                        variant="outlined"
+                        size="small"
+                      />
+                    </Box>
+                  </AccordionSummary>
 
-                          <Stack
-                            height="100%"
-                            sx={{
-                              borderRadius: 1,
-                              border: 1,
-                              borderColor: theme.palette.grey[300],
-                              overflow: "hidden",
-                            }}
-                          >
-                            <Box
-                              bgcolor={theme.palette.grey[900]}
-                              borderRadius={0}
-                              display="flex"
-                              justifyContent="center"
-                              alignItems="center"
-                              flex={1}
+                  {/* <AccordionDetails sx={{ p: withImage ? 2 : "0 !important" }}>
+                    {withImage ? (
+                      <ImageList
+                        sx={{ width: "100%" }}
+                        cols={1}
+                        rowHeight={234}
+                        gap={16}
+                      >
+                        {Array(10)
+                          .fill(0)
+                          .map((_, j) => (
+                            <ImageListItem
+                              key={j}
+                              sx={{
+                                width: "100%",
+                                borderRadius: "8px",
+                                overflow: "hidden",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                backgroundColor:
+                                  j === 2
+                                    ? theme.palette.primary.main
+                                    : "white",
+                                p: 1,
+                              }}
                             >
-                              <img
+                              {![6, 7, 10].includes(i) && (
+                                <MappedChip
+                                  label={j}
+                                  mappedColor={mappedColors[j]}
+                                  position="absolute"
+                                />
+                              )}
+
+                              <Stack
+                                height="100%"
+                                sx={{
+                                  borderRadius: 1,
+                                  border: 1,
+                                  borderColor: theme.palette.grey[300],
+                                  overflow: "hidden",
+                                }}
+                              >
+                                <Box
+                                  bgcolor={theme.palette.grey[900]}
+                                  borderRadius={0}
+                                  display="flex"
+                                  justifyContent="center"
+                                  alignItems="center"
+                                  flex={1}
+                                >
+                                  <img
+                                    width="100%"
+                                    src="https://upload.wikimedia.org/wikipedia/commons/c/c3/LibreOffice_Writer_6.3.png"
+                                    alt={`이미지 ${j}`}
+                                    loading="lazy"
+                                  />
+                                </Box>
+
+                                <Stack
+                                  height="64px"
+                                  justifyContent="space-between"
+                                  p={1}
+                                  bgcolor={theme.palette.background.paper}
+                                  borderRadius={0}
+                                >
+                                  <Stack direction="row" spacing={1}>
+                                    <Typography variant="subtitle2">
+                                      이미지
+                                    </Typography>
+
+                                    <Typography
+                                      variant="subtitle2"
+                                      fontWeight="bold"
+                                    >{`20240215245d000${j}`}</Typography>
+                                  </Stack>
+
+                                  {[0, 1, 2, 3, 4].includes(j) ? (
+                                    <Typography
+                                      variant="caption"
+                                      color="primary"
+                                      textAlign="right"
+                                      aria-label="updatedAt"
+                                      fontWeight="bold"
+                                    >
+                                      Updated. 2024.02.15 16:4{j}
+                                    </Typography>
+                                  ) : (
+                                    <Typography
+                                      variant="caption"
+                                      color="default"
+                                      textAlign="right"
+                                      aria-label="updatedAt"
+                                    >
+                                      Not Updated
+                                    </Typography>
+                                  )}
+                                </Stack>
+                              </Stack>
+                            </ImageListItem>
+                          ))}
+                      </ImageList>
+                    ) : (
+                      <List sx={{ p: 0 }}>
+                        {Array(10)
+                          .fill(0)
+                          .map((_, j) => (
+                            <ListItem
+                              key={j}
+                              sx={{
+                                p: 0,
+                                borderBottom: `1px solid ${theme.palette.grey[300]}`,
+                              }}
+                            >
+                              <Stack
+                                direction="row"
+                                alignItems="center"
+                                justifyContent="space-around"
+                                spacing={1}
+                                p={1}
+                                bgcolor={theme.palette.background.paper}
                                 width="100%"
-                                src="https://upload.wikimedia.org/wikipedia/commons/c/c3/LibreOffice_Writer_6.3.png"
-                                alt={`이미지 ${j}`}
-                                loading="lazy"
-                              />
-                            </Box>
+                              >
+                                <MappedChip
+                                  label={j}
+                                  mappedColor={mappedColors[j]}
+                                />
 
-                            <Stack
-                              height="64px"
-                              justifyContent="space-between"
-                              p={1}
-                              bgcolor={theme.palette.background.paper}
-                              borderRadius={0}
-                            >
-                              <Stack direction="row" spacing={1}>
-                                <Typography variant="subtitle2">
-                                  이미지
-                                </Typography>
+                                <Stack
+                                  height="42px"
+                                  justifyContent="space-between"
+                                >
+                                  <Stack direction="row" spacing={1}>
+                                    <Typography variant="subtitle2">
+                                      이미지
+                                    </Typography>
 
-                                <Typography
-                                  variant="subtitle2"
-                                  fontWeight="bold"
-                                >{`20240215245d000${j}`}</Typography>
+                                    <Typography
+                                      variant="subtitle2"
+                                      fontWeight="bold"
+                                    >{`20240215245d000${j}`}</Typography>
+                                  </Stack>
+
+                                  {[0, 1, 2, 3, 4].includes(j) ? (
+                                    <Typography
+                                      variant="caption"
+                                      color="primary"
+                                      textAlign="right"
+                                      aria-label="updatedAt"
+                                      fontWeight="bold"
+                                    >
+                                      Updated. 2024.02.15 16:4{j}
+                                    </Typography>
+                                  ) : (
+                                    <Typography
+                                      variant="caption"
+                                      color="default"
+                                      textAlign="right"
+                                      aria-label="updatedAt"
+                                    >
+                                      Not Updated
+                                    </Typography>
+                                  )}
+                                </Stack>
                               </Stack>
-
-                              {[0, 1, 2, 3, 4].includes(j) ? (
-                                <Typography
-                                  variant="caption"
-                                  color="primary"
-                                  textAlign="right"
-                                  aria-label="updatedAt"
-                                  fontWeight="bold"
-                                >
-                                  Updated. 2024.02.15 16:4{j}
-                                </Typography>
-                              ) : (
-                                <Typography
-                                  variant="caption"
-                                  color="default"
-                                  textAlign="right"
-                                  aria-label="updatedAt"
-                                >
-                                  Not Updated
-                                </Typography>
-                              )}
-                            </Stack>
-                          </Stack>
-                        </ImageListItem>
-                      ))}
-                  </ImageList>
-                ) : (
-                  <List sx={{ p: 0 }}>
-                    {Array(10)
-                      .fill(0)
-                      .map((_, j) => (
-                        <ListItem
-                          key={j}
-                          sx={{
-                            p: 0,
-                            borderBottom: `1px solid ${theme.palette.grey[300]}`,
-                          }}
-                        >
-                          <Stack
-                            direction="row"
-                            alignItems="center"
-                            justifyContent="space-around"
-                            spacing={1}
-                            p={1}
-                            bgcolor={theme.palette.background.paper}
-                            width="100%"
-                          >
-                            <MappedChip
-                              label={j}
-                              mappedColor={mappedColors[j]}
-                            />
-
-                            <Stack height="42px" justifyContent="space-between">
-                              <Stack direction="row" spacing={1}>
-                                <Typography variant="subtitle2">
-                                  이미지
-                                </Typography>
-
-                                <Typography
-                                  variant="subtitle2"
-                                  fontWeight="bold"
-                                >{`20240215245d000${j}`}</Typography>
-                              </Stack>
-
-                              {[0, 1, 2, 3, 4].includes(j) ? (
-                                <Typography
-                                  variant="caption"
-                                  color="primary"
-                                  textAlign="right"
-                                  aria-label="updatedAt"
-                                  fontWeight="bold"
-                                >
-                                  Updated. 2024.02.15 16:4{j}
-                                </Typography>
-                              ) : (
-                                <Typography
-                                  variant="caption"
-                                  color="default"
-                                  textAlign="right"
-                                  aria-label="updatedAt"
-                                >
-                                  Not Updated
-                                </Typography>
-                              )}
-                            </Stack>
-                          </Stack>
-                        </ListItem>
-                      ))}
-                  </List>
-                )}
-              </AccordionDetails>
-            </CustomAccordion>
+                            </ListItem>
+                          ))}
+                      </List>
+                    )}
+                  </AccordionDetails> */}
+                </CustomAccordion>
+              ))}
+            </Fragment>
           ))}
-      </Scrollbar>
+        </Scrollbar>
+      ) : (
+        <Loading />
+      )}
     </ReceiptsCardContainer>
   );
 };
