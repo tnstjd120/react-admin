@@ -8,8 +8,8 @@ interface IQaWorkContext {
 
   receiptsByDate: Record<string, Receipt[]>;
   setReceiptsByDate: (newReceipts: Record<string, Receipt[]>) => void;
-  currentReceipt: {} | null;
-  setCurrentReceipt: (newCurrentReceipt: {}) => void;
+  currentReceipt: Receipt | null;
+  setCurrentReceipt: (newCurrentReceipt: Receipt) => void;
 
   images: string[];
   setImages: (newImages: string[]) => void;
