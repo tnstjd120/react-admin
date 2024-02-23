@@ -1,3 +1,5 @@
+import { IImage } from "@/types/Image";
+import { IQaData } from "@/types/QaData";
 import { Receipt } from "@/types/Receipt";
 import { Range } from "react-date-range";
 import { create } from "zustand";
@@ -11,16 +13,16 @@ interface IQaWorkContext {
   currentReceipt: Receipt | null;
   setCurrentReceipt: (newCurrentReceipt: Receipt) => void;
 
-  images: string[];
-  setImages: (newImages: string[]) => void;
-  currentImage: {} | null;
-  setCurrentImage: (newCurrentImage: {}) => void;
+  images: IImage[];
+  setImages: (newImages: IImage[]) => void;
+  currentImage: IImage | null;
+  setCurrentImage: (newCurrentImage: IImage) => void;
 
   exts: string[];
   setExts: (newExts: string[]) => void;
 
-  qaData: string[];
-  setQaData: (newQaData: string[]) => void;
+  qaData: IQaData[];
+  setQaData: (newQaData: IQaData[]) => void;
 
   withImage: boolean;
   setWithImage: (withImage: boolean) => void;

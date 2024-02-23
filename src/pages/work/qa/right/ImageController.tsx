@@ -1,4 +1,4 @@
-import { Box, IconButton, styled } from "@mui/material";
+import { Box, IconButton, styled, useTheme } from "@mui/material";
 import { IconPin, IconPinFilled } from "@tabler/icons-react";
 import { useRef, useState } from "react";
 import FilerobotImageEditor, {
@@ -8,10 +8,12 @@ import FilerobotImageEditor, {
 } from "react-filerobot-image-editor";
 
 type Props = {
-  source: Pick<FilerobotImageEditorConfig, "source">;
+  source: string | HTMLImageElement;
 };
 
-const ImageController = () => {
+const ImageController = (props: Props) => {
+  const theme = useTheme();
+
   const currentImageRef = useRef<HTMLCanvasElement | null>(null);
   const currentImageWrapperRef = useRef<HTMLElement | null>(null);
 
@@ -40,7 +42,7 @@ const ImageController = () => {
         {isFixImage ? <IconPinFilled /> : <IconPin />}
       </FixImageButton>
       <FilerobotImageEditor
-        source={`https://upload.wikimedia.org/wikipedia/commons/c/c3/LibreOffice_Writer_6.3.png`}
+        source={props.source}
         annotationsCommon={{
           fill: "#333333",
         }}
@@ -52,8 +54,14 @@ const ImageController = () => {
         savingPixelRatio={1}
         previewPixelRatio={1}
         getCurrentImgDataFnRef={currentImageRef}
+        theme={{
+          palette: {
+            "bg-secondary": theme.palette.background.paper,
+          },
+        }}
         showBackButton
         removeSaveButton
+        noCrossOrigin
       />
     </ImageControllerContainer>
   );
@@ -95,6 +103,10 @@ const ImageControllerContainer = styled(Box, {
 
     "& .FIE_tabs": {
       display: "none",
+    },
+
+    "& .FIE_canvas-node": {
+      backgroundColor: theme.palette.background.paper,
     },
 
     "& .FIE_editor-content": {

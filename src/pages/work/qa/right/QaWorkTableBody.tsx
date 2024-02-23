@@ -18,9 +18,7 @@ import NumberCommaTextField from "./NumberCommaTextField";
 const QaWorkTableBody = () => {
   const theme = useTheme();
 
-  const { rows, page, rowsPerPage, selected, setSelected } = useTableStore(
-    (state) => state
-  );
+  const { rows, selected, setSelected } = useTableStore((state) => state);
 
   const [formData, setFormData] = useState<IQaData[]>([]);
 
@@ -76,218 +74,216 @@ const QaWorkTableBody = () => {
 
   return (
     <>
-      {formData.length ? (
+      {formData ? (
         <Droppable droppableId="qaWorkDroppable">
           {(provider) => (
             <TableBody ref={provider.innerRef} {...provider.droppableProps}>
-              {formData
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row: IQaData | any, index) => {
-                  const isItemSelected = isSelected(row.qaDataId);
-                  const labelId = `table-checkbox-${index}`;
+              {formData.map((row: IQaData | any, index) => {
+                const isItemSelected = isSelected(row.qaDataId);
+                const labelId = `table-checkbox-${index}`;
 
-                  return (
-                    <Draggable
-                      key={row.qaDataId}
-                      draggableId={String(row.qaDataId)}
-                      index={index}
-                    >
-                      {(provider) => (
-                        <TableRow
-                          aria-checked={isItemSelected}
-                          tabIndex={-1}
-                          key={row.qaDataId}
-                          selected={isItemSelected}
-                          ref={provider.innerRef}
-                          {...provider.draggableProps}
-                        >
-                          <SmallPaddingTableCell {...provider.dragHandleProps}>
-                            <IconDragDrop />
-                          </SmallPaddingTableCell>
+                return (
+                  <Draggable
+                    key={row.qaDataId}
+                    draggableId={String(row.qaDataId)}
+                    index={index}
+                  >
+                    {(provider) => (
+                      <TableRow
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={row.qaDataId}
+                        selected={isItemSelected}
+                        ref={provider.innerRef}
+                        {...provider.draggableProps}
+                      >
+                        <SmallPaddingTableCell {...provider.dragHandleProps}>
+                          <IconDragDrop />
+                        </SmallPaddingTableCell>
 
-                          <SmallPaddingTableCell padding="checkbox">
-                            <CustomCheckbox
-                              color="primary"
-                              checked={isItemSelected}
-                              onClick={(event) =>
-                                handleClick(event, row.qaDataId)
-                              }
-                              inputProps={{
-                                "aria-labelledby": labelId,
-                              }}
-                            />
-                          </SmallPaddingTableCell>
+                        <SmallPaddingTableCell padding="checkbox">
+                          <CustomCheckbox
+                            color="primary"
+                            checked={isItemSelected}
+                            onClick={(event) =>
+                              handleClick(event, row.qaDataId)
+                            }
+                            inputProps={{
+                              "aria-labelledby": labelId,
+                            }}
+                          />
+                        </SmallPaddingTableCell>
 
-                          <SmallPaddingTableCell>
-                            <TextField
-                              size="small"
-                              onChange={(event) =>
-                                handleInputChange(
-                                  row.qaDataId,
-                                  "treatmentCode",
-                                  event.target.value
-                                )
-                              }
-                              defaultValue={row.treatmentCode}
-                            />
-                          </SmallPaddingTableCell>
+                        <SmallPaddingTableCell>
+                          <TextField
+                            size="small"
+                            onChange={(event) =>
+                              handleInputChange(
+                                row.qaDataId,
+                                "treatmentCode",
+                                event.target.value
+                              )
+                            }
+                            defaultValue={row.treatmentCode}
+                          />
+                        </SmallPaddingTableCell>
 
-                          <SmallPaddingTableCell>
-                            <TextField
-                              size="small"
-                              disabled
-                              onChange={(event) =>
-                                handleInputChange(
-                                  row.qaDataId,
-                                  "treatment",
-                                  event.target.value
-                                )
-                              }
-                              value={row.treatment}
-                            />
-                          </SmallPaddingTableCell>
+                        <SmallPaddingTableCell>
+                          <TextField
+                            size="small"
+                            disabled
+                            onChange={(event) =>
+                              handleInputChange(
+                                row.qaDataId,
+                                "treatment",
+                                event.target.value
+                              )
+                            }
+                            value={row.treatment}
+                          />
+                        </SmallPaddingTableCell>
 
-                          <SmallPaddingTableCell>
-                            <TextField
-                              size="small"
-                              onChange={(event) =>
-                                handleInputChange(
-                                  row.qaDataId,
-                                  "dateFrom",
-                                  event.target.value
-                                )
-                              }
-                              value={row.dateFrom}
-                            />
-                          </SmallPaddingTableCell>
+                        <SmallPaddingTableCell>
+                          <TextField
+                            size="small"
+                            onChange={(event) =>
+                              handleInputChange(
+                                row.qaDataId,
+                                "dateFrom",
+                                event.target.value
+                              )
+                            }
+                            value={row.dateFrom}
+                          />
+                        </SmallPaddingTableCell>
 
-                          <SmallPaddingTableCell>
-                            <TextField
-                              size="small"
-                              onChange={(event) =>
-                                handleInputChange(
-                                  row.qaDataId,
-                                  "dateTo",
-                                  event.target.value
-                                )
-                              }
-                              value={row.dateTo}
-                            />
-                          </SmallPaddingTableCell>
+                        <SmallPaddingTableCell>
+                          <TextField
+                            size="small"
+                            onChange={(event) =>
+                              handleInputChange(
+                                row.qaDataId,
+                                "dateTo",
+                                event.target.value
+                              )
+                            }
+                            value={row.dateTo}
+                          />
+                        </SmallPaddingTableCell>
 
-                          <SmallPaddingTableCell>
-                            <TextField
-                              size="small"
-                              onChange={(event) =>
-                                handleInputChange(
-                                  row.qaDataId,
-                                  "ediCode",
-                                  event.target.value
-                                )
-                              }
-                              value={row.ediCode}
-                            />
-                          </SmallPaddingTableCell>
+                        <SmallPaddingTableCell>
+                          <TextField
+                            size="small"
+                            onChange={(event) =>
+                              handleInputChange(
+                                row.qaDataId,
+                                "ediCode",
+                                event.target.value
+                              )
+                            }
+                            value={row.ediCode}
+                          />
+                        </SmallPaddingTableCell>
 
-                          <SmallPaddingTableCell>
-                            <TextField
-                              size="small"
-                              onChange={(event) =>
-                                handleInputChange(
-                                  row.qaDataId,
-                                  "ediName",
-                                  event.target.value
-                                )
-                              }
-                              value={row.ediName}
-                            />
-                          </SmallPaddingTableCell>
+                        <SmallPaddingTableCell>
+                          <TextField
+                            size="small"
+                            onChange={(event) =>
+                              handleInputChange(
+                                row.qaDataId,
+                                "ediName",
+                                event.target.value
+                              )
+                            }
+                            value={row.ediName}
+                          />
+                        </SmallPaddingTableCell>
 
-                          <SmallPaddingTableCell>
-                            <TextField
-                              size="small"
-                              onChange={(event) =>
-                                handleInputChange(
-                                  row.qaDataId,
-                                  "price",
-                                  event.target.value
-                                )
-                              }
-                              value={row.price}
-                            />
-                          </SmallPaddingTableCell>
+                        <SmallPaddingTableCell>
+                          <TextField
+                            size="small"
+                            onChange={(event) =>
+                              handleInputChange(
+                                row.qaDataId,
+                                "price",
+                                event.target.value
+                              )
+                            }
+                            value={row.price}
+                          />
+                        </SmallPaddingTableCell>
 
-                          <SmallPaddingTableCell>
-                            <TextField
-                              size="small"
-                              onChange={(event) =>
-                                handleInputChange(
-                                  row.qaDataId,
-                                  "cnt",
-                                  event.target.value
-                                )
-                              }
-                              value={row.cnt}
-                            />
-                          </SmallPaddingTableCell>
+                        <SmallPaddingTableCell>
+                          <TextField
+                            size="small"
+                            onChange={(event) =>
+                              handleInputChange(
+                                row.qaDataId,
+                                "cnt",
+                                event.target.value
+                              )
+                            }
+                            value={row.cnt}
+                          />
+                        </SmallPaddingTableCell>
 
-                          <SmallPaddingTableCell>
-                            <TextField
-                              size="small"
-                              onChange={(event) =>
-                                handleInputChange(
-                                  row.qaDataId,
-                                  "term",
-                                  event.target.value
-                                )
-                              }
-                              value={row.term}
-                            />
-                          </SmallPaddingTableCell>
+                        <SmallPaddingTableCell>
+                          <TextField
+                            size="small"
+                            onChange={(event) =>
+                              handleInputChange(
+                                row.qaDataId,
+                                "term",
+                                event.target.value
+                              )
+                            }
+                            value={row.term}
+                          />
+                        </SmallPaddingTableCell>
 
-                          <SmallPaddingTableCell>
-                            <NumberCommaTextField
-                              value={row.total_price}
-                              onInputChange={(newValue) =>
-                                handleInputChange(
-                                  row.qaDataId,
-                                  "total_price",
-                                  newValue
-                                )
-                              }
-                            />
-                          </SmallPaddingTableCell>
+                        <SmallPaddingTableCell>
+                          <NumberCommaTextField
+                            value={row.total_price}
+                            onInputChange={(newValue) =>
+                              handleInputChange(
+                                row.qaDataId,
+                                "total_price",
+                                newValue
+                              )
+                            }
+                          />
+                        </SmallPaddingTableCell>
 
-                          <SmallPaddingTableCell>
-                            <NumberCommaTextField
-                              value={row.non_benefit}
-                              onInputChange={(newValue) =>
-                                handleInputChange(
-                                  row.qaDataId,
-                                  "non_benefit",
-                                  newValue
-                                )
-                              }
-                            />
-                          </SmallPaddingTableCell>
+                        <SmallPaddingTableCell>
+                          <NumberCommaTextField
+                            value={row.non_benefit}
+                            onInputChange={(newValue) =>
+                              handleInputChange(
+                                row.qaDataId,
+                                "non_benefit",
+                                newValue
+                              )
+                            }
+                          />
+                        </SmallPaddingTableCell>
 
-                          <SmallPaddingTableCell>
-                            <NumberCommaTextField
-                              value={row.all_selfpay}
-                              onInputChange={(newValue) =>
-                                handleInputChange(
-                                  row.qaDataId,
-                                  "all_selfpay",
-                                  newValue
-                                )
-                              }
-                            />
-                          </SmallPaddingTableCell>
-                        </TableRow>
-                      )}
-                    </Draggable>
-                  );
-                })}
+                        <SmallPaddingTableCell>
+                          <NumberCommaTextField
+                            value={row.all_selfpay}
+                            onInputChange={(newValue) =>
+                              handleInputChange(
+                                row.qaDataId,
+                                "all_selfpay",
+                                newValue
+                              )
+                            }
+                          />
+                        </SmallPaddingTableCell>
+                      </TableRow>
+                    )}
+                  </Draggable>
+                );
+              })}
 
               {provider.placeholder}
             </TableBody>
@@ -306,8 +302,4 @@ export default QaWorkTableBody;
 
 const SmallPaddingTableCell = styled(TableCell)(({ theme }) => ({
   padding: "4px",
-
-  "& input:disabled": {
-    backgroundColor: theme.palette.grey[50],
-  },
 }));

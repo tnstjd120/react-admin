@@ -18,9 +18,14 @@ import {
   useTheme,
 } from "@mui/material";
 import { useQaWorkStore } from "@/store/qaWork/useQaWorkStore";
-import { IconChevronDown } from "@tabler/icons-react";
+import {
+  IconChevronDown,
+  IconSitemap,
+  IconTournament,
+} from "@tabler/icons-react";
 import {
   Fragment,
+  ReactElement,
   ReactNode,
   SyntheticEvent,
   useEffect,
@@ -29,13 +34,14 @@ import {
 
 import BlankCard from "@/components/common/BlankCard";
 import Scrollbar from "@/components/common/Scrollbar";
-import theme from "@/utils/theme";
 import { api } from "@/api/axios";
 import { API_PATH } from "@/api/API_PATH";
 import dayjs from "dayjs";
 import Loading from "@/components/common/Loading";
+import { AccountTreeRounded, SchemaOutlined } from "@mui/icons-material";
 
 const ReceiptsCard = () => {
+  const theme = useTheme();
   const {
     mappedColors,
     withImage,
@@ -44,6 +50,12 @@ const ReceiptsCard = () => {
     receiptsByDate,
     setCurrentReceipt,
     currentReceipt,
+    images,
+    setImages,
+    currentImage,
+    setCurrentImage,
+    qaData,
+    setQaData,
   } = useQaWorkStore((state) => state);
 
   const [expanded, setExpanded] = useState<number | false>(false);
@@ -62,6 +74,10 @@ const ReceiptsCard = () => {
     setExpanded(false);
   }, [dateRange, tabValue]);
 
+  useEffect(() => {
+    if (currentImage) getQaData(currentImage?.imageId);
+  }, [currentImage]);
+
   const getReceipts = async () => {
     const { PATH, METHOD } =
       tabValue === 0
@@ -71,12 +87,10 @@ const ReceiptsCard = () => {
     const response = await api(PATH, {
       method: METHOD.method,
       params: {
-        opDtFrom: String(dayjs(dateRange.startDate).format("YYYYMMDD")),
-        opDtTo: String(dayjs(dateRange.endDate).format("YYYYMMDD")),
+        opDtFrom: dayjs(dateRange.startDate).format("YYYYMMDD"),
+        opDtTo: dayjs(dateRange.endDate).format("YYYYMMDD"),
       },
     });
-
-    console.log("response => ", response);
 
     setReceiptsByDate(
       tabValue === 0
@@ -86,15 +100,40 @@ const ReceiptsCard = () => {
   };
 
   const handleClickReceipt = (receiptId: number) => {
-    console.log("receiptId => ", receiptId);
-    console.log(
-      "Object.values(receiptsByDate) => ",
+    setCurrentReceipt(
       Object.values(receiptsByDate)
+        .flat(1)
+        .filter((receipt) => receipt.receiptId === receiptId)[0]
     );
-    // setCurrentReceipt(Object.values(receiptsByDate));
+
+    if (currentReceipt?.receiptId !== receiptId) getImages(receiptId);
   };
 
-  const getImages = async (receiptId: string) => {};
+  const getImages = async (receiptId: number) => {
+    const { PATH, METHOD } = API_PATH.QA.IMAGES_GET;
+
+    const response = await api(PATH, {
+      method: METHOD.method,
+      params: {
+        receiptId: receiptId,
+      },
+    });
+
+    setImages(response.data.imageLists);
+  };
+
+  const getQaData = async (imageId: number) => {
+    const { PATH, METHOD } = API_PATH.QA.QA_DATA_GET;
+
+    const response = await api(PATH, {
+      method: METHOD.method,
+      params: {
+        imageId: imageId,
+      },
+    });
+
+    setQaData(response.data.qaDataLists);
+  };
 
   return (
     <ReceiptsCardContainer>
@@ -121,20 +160,20 @@ const ReceiptsCard = () => {
                 >
                   <AccordionSummary
                     expandIcon={<IconChevronDown />}
-                    sx={{ position: "sticky", top: "-2px", zIndex: 10 }}
+                    sx={{ position: "sticky", top: "-2px", zIndex: 11 }}
                     onClick={() => handleClickReceipt(receipt.receiptId)}
                   >
                     <Box display="flex" alignItems="center" gap={1}>
                       <Typography variant="body2">{receipt.rcpNo}</Typography>
                       <Chip
-                        label={receipts.length}
+                        label={receipt.detailDocImageCount}
                         variant="outlined"
                         size="small"
                       />
                     </Box>
                   </AccordionSummary>
 
-                  {/* <AccordionDetails sx={{ p: withImage ? 2 : "0 !important" }}>
+                  <AccordionDetails sx={{ p: withImage ? 2 : "0 !important" }}>
                     {withImage ? (
                       <ImageList
                         sx={{ width: "100%" }}
@@ -142,169 +181,224 @@ const ReceiptsCard = () => {
                         rowHeight={234}
                         gap={16}
                       >
-                        {Array(10)
-                          .fill(0)
-                          .map((_, j) => (
-                            <ImageListItem
-                              key={j}
+                        {images.map((image, j) => (
+                          <ImageListItem
+                            key={image.imageId}
+                            sx={{
+                              width: "100%",
+                              borderRadius: "8px",
+                              overflow: "hidden",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              cursor: "pointer",
+                              backgroundColor:
+                                currentImage?.imageId === image.imageId
+                                  ? theme.palette.primary.main
+                                  : "white",
+                              p: 1,
+
+                              "& > .MuiStack-root": {
+                                transition: "0.2s",
+                              },
+                              "&:hover": {
+                                transition: "0.2s",
+
+                                "& > .MuiStack-root": {
+                                  borderColor: theme.palette.primary.light,
+                                  transform: "scale(1.02)",
+                                },
+                              },
+                            }}
+                            onClick={() => setCurrentImage(image)}
+                          >
+                            {image.isMapping && !image.isMultiMapping ? (
+                              <MappedChip
+                                label={image.clmInfoSeqNo[0]}
+                                mappedColor={mappedColors[j]}
+                                position="absolute"
+                              />
+                            ) : image.isMapping && image.isMultiMapping ? (
+                              <MappedChip
+                                label={<IconSitemap />}
+                                multiMapped
+                                mappedColor={mappedColors[j]}
+                                position="absolute"
+                              />
+                            ) : null}
+
+                            <Stack
+                              height="100%"
+                              width="100%"
                               sx={{
-                                width: "100%",
-                                borderRadius: "8px",
+                                borderRadius: 1,
+                                border: 1,
+                                borderColor: theme.palette.grey[300],
                                 overflow: "hidden",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                backgroundColor:
-                                  j === 2
-                                    ? theme.palette.primary.main
-                                    : "white",
-                                p: 1,
                               }}
                             >
-                              {![6, 7, 10].includes(i) && (
-                                <MappedChip
-                                  label={j}
-                                  mappedColor={mappedColors[j]}
-                                  position="absolute"
+                              <Box
+                                bgcolor={theme.palette.grey[900]}
+                                borderRadius={0}
+                                display="flex"
+                                justifyContent="center"
+                                alignItems="center"
+                                maxHeight="calc(100% - 64px)"
+                                flex={1}
+                              >
+                                <img
+                                  width="100%"
+                                  src={image.imageUrl}
+                                  alt={image.imageName}
+                                  loading="lazy"
                                 />
-                              )}
+                              </Box>
 
                               <Stack
-                                height="100%"
-                                sx={{
-                                  borderRadius: 1,
-                                  border: 1,
-                                  borderColor: theme.palette.grey[300],
-                                  overflow: "hidden",
-                                }}
+                                height="64px"
+                                justifyContent="space-between"
+                                p={1}
+                                bgcolor={theme.palette.background.paper}
+                                borderRadius={0}
                               >
-                                <Box
-                                  bgcolor={theme.palette.grey[900]}
-                                  borderRadius={0}
-                                  display="flex"
-                                  justifyContent="center"
-                                  alignItems="center"
-                                  flex={1}
-                                >
-                                  <img
-                                    width="100%"
-                                    src="https://upload.wikimedia.org/wikipedia/commons/c/c3/LibreOffice_Writer_6.3.png"
-                                    alt={`이미지 ${j}`}
-                                    loading="lazy"
-                                  />
-                                </Box>
+                                <Stack direction="row" spacing={1}>
+                                  <Typography variant="subtitle2">
+                                    이미지
+                                  </Typography>
 
-                                <Stack
-                                  height="64px"
-                                  justifyContent="space-between"
-                                  p={1}
-                                  bgcolor={theme.palette.background.paper}
-                                  borderRadius={0}
-                                >
-                                  <Stack direction="row" spacing={1}>
-                                    <Typography variant="subtitle2">
-                                      이미지
-                                    </Typography>
-
-                                    <Typography
-                                      variant="subtitle2"
-                                      fontWeight="bold"
-                                    >{`20240215245d000${j}`}</Typography>
-                                  </Stack>
-
-                                  {[0, 1, 2, 3, 4].includes(j) ? (
-                                    <Typography
-                                      variant="caption"
-                                      color="primary"
-                                      textAlign="right"
-                                      aria-label="updatedAt"
-                                      fontWeight="bold"
-                                    >
-                                      Updated. 2024.02.15 16:4{j}
-                                    </Typography>
-                                  ) : (
-                                    <Typography
-                                      variant="caption"
-                                      color="default"
-                                      textAlign="right"
-                                      aria-label="updatedAt"
-                                    >
-                                      Not Updated
-                                    </Typography>
-                                  )}
+                                  <Typography
+                                    variant="subtitle2"
+                                    fontWeight="bold"
+                                  >
+                                    {image.imageName}
+                                  </Typography>
                                 </Stack>
+
+                                {image.lastEditTime ? (
+                                  <Typography
+                                    variant="caption"
+                                    color="primary"
+                                    textAlign="right"
+                                    aria-label="updatedAt"
+                                    fontWeight="bold"
+                                  >
+                                    Updated. {image.lastEditTime}
+                                  </Typography>
+                                ) : (
+                                  <Typography
+                                    variant="caption"
+                                    color="default"
+                                    textAlign="right"
+                                    aria-label="updatedAt"
+                                  >
+                                    Not Updated
+                                  </Typography>
+                                )}
                               </Stack>
-                            </ImageListItem>
-                          ))}
+                            </Stack>
+                          </ImageListItem>
+                        ))}
                       </ImageList>
                     ) : (
                       <List sx={{ p: 0 }}>
-                        {Array(10)
-                          .fill(0)
-                          .map((_, j) => (
-                            <ListItem
-                              key={j}
-                              sx={{
-                                p: 0,
-                                borderBottom: `1px solid ${theme.palette.grey[300]}`,
-                              }}
+                        {images.map((image, j) => (
+                          <ListItem
+                            key={image.imageId}
+                            sx={{
+                              p: 0,
+                              cursor: "pointer",
+                              borderBottom: `1px solid ${theme.palette.grey[300]}`,
+                              overflow: "hidden",
+
+                              "& > .MuiStack-root": {
+                                transition: "0.2s",
+                              },
+                              "&:hover": {
+                                transition: "0.2s",
+
+                                "& > .MuiStack-root": {
+                                  backgroundColor:
+                                    currentImage?.imageId !== image.imageId
+                                      ? theme.palette.primary.light
+                                      : theme.palette.primary.main,
+                                  transform: "scale(1.02)",
+                                },
+                              },
+                            }}
+                            onClick={() => setCurrentImage(image)}
+                          >
+                            <Stack
+                              bgcolor={
+                                currentImage?.imageId === image.imageId
+                                  ? theme.palette.primary.main
+                                  : theme.palette.background.paper
+                              }
+                              direction="row"
+                              alignItems="center"
+                              justifyContent="space-between"
+                              width="100%"
+                              spacing={1}
+                              p={1}
                             >
-                              <Stack
-                                direction="row"
-                                alignItems="center"
-                                justifyContent="space-around"
-                                spacing={1}
-                                p={1}
-                                bgcolor={theme.palette.background.paper}
-                                width="100%"
-                              >
+                              {image.isMapping && !image.isMultiMapping ? (
                                 <MappedChip
-                                  label={j}
+                                  label={image.clmInfoSeqNo[0]}
                                   mappedColor={mappedColors[j]}
+                                  position="absolute"
                                 />
+                              ) : image.isMapping && image.isMultiMapping ? (
+                                <MappedChip
+                                  label={<IconSitemap />}
+                                  mappedColor={mappedColors[j]}
+                                  multiMapped
+                                />
+                              ) : null}
 
-                                <Stack
-                                  height="42px"
-                                  justifyContent="space-between"
-                                >
-                                  <Stack direction="row" spacing={1}>
-                                    <Typography variant="subtitle2">
-                                      이미지
-                                    </Typography>
+                              <Stack
+                                height="42px"
+                                width="100%"
+                                justifyContent="space-between"
+                              >
+                                <Stack direction="row" spacing={1}>
+                                  <Typography variant="subtitle2">
+                                    이미지
+                                  </Typography>
 
-                                    <Typography
-                                      variant="subtitle2"
-                                      fontWeight="bold"
-                                    >{`20240215245d000${j}`}</Typography>
-                                  </Stack>
-
-                                  {[0, 1, 2, 3, 4].includes(j) ? (
-                                    <Typography
-                                      variant="caption"
-                                      color="primary"
-                                      textAlign="right"
-                                      aria-label="updatedAt"
-                                      fontWeight="bold"
-                                    >
-                                      Updated. 2024.02.15 16:4{j}
-                                    </Typography>
-                                  ) : (
-                                    <Typography
-                                      variant="caption"
-                                      color="default"
-                                      textAlign="right"
-                                      aria-label="updatedAt"
-                                    >
-                                      Not Updated
-                                    </Typography>
-                                  )}
+                                  <Typography
+                                    variant="subtitle2"
+                                    fontWeight="bold"
+                                  >
+                                    {image.imageName}
+                                  </Typography>
                                 </Stack>
+
+                                {image.lastEditTime ? (
+                                  <Typography
+                                    variant="caption"
+                                    color="primary"
+                                    textAlign="right"
+                                    aria-label="updatedAt"
+                                    fontWeight="bold"
+                                  >
+                                    Updated. {image.lastEditTime}
+                                  </Typography>
+                                ) : (
+                                  <Typography
+                                    variant="caption"
+                                    color="default"
+                                    textAlign="right"
+                                    aria-label="updatedAt"
+                                  >
+                                    Not Updated
+                                  </Typography>
+                                )}
                               </Stack>
-                            </ListItem>
-                          ))}
+                            </Stack>
+                          </ListItem>
+                        ))}
                       </List>
                     )}
-                  </AccordionDetails> */}
+                  </AccordionDetails>
                 </CustomAccordion>
               ))}
             </Fragment>
@@ -332,7 +426,6 @@ const CustomAccordion = styled(Accordion)<AccordionProps>(({ theme }) => ({
     borderLeft: `2px solid ${theme.palette.primary.main}`,
     borderRight: `2px solid ${theme.palette.primary.main}`,
     borderBottom: `2px solid ${theme.palette.primary.main}`,
-    // borderRadius: "8px 8px 0 0",
     backgroundColor: `${theme.palette.primary.light}`,
     minHeight: "40px",
   },
@@ -375,13 +468,37 @@ const CustomTabPanel = (props: ICustomTabPanel) => {
 };
 
 interface IMappedChip {
-  label: string | number;
+  label?: ReactNode;
   mappedColor: string;
+  multiMapped?: boolean;
   position?: string;
 }
 const MappedChip = (props: IMappedChip) => {
-  const { label, mappedColor, position = "static" } = props;
+  const {
+    label,
+    mappedColor,
+    position = "static",
+    multiMapped = false,
+  } = props;
   const theme = useTheme();
+
+  const multiMappedStyles = multiMapped
+    ? {
+        padding: 0,
+        width: "32px",
+        height: "32px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        boxSizing: "border-box",
+
+        "& svg": {
+          color: theme.palette.text.primary,
+          width: 20,
+          height: 20,
+        },
+      }
+    : {};
 
   return (
     <Chip
@@ -395,10 +512,15 @@ const MappedChip = (props: IMappedChip) => {
         borderWidth: "3px",
         borderRadius: "4px",
         borderColor: mappedColor,
-        color: mappedColor,
+        color: theme.palette.text.primary,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 10,
 
         "& .MuiChip-label": {
           padding: "0 10px",
+          ...multiMappedStyles,
         },
       }}
     />
