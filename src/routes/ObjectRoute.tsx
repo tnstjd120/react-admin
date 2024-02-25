@@ -5,6 +5,7 @@ import WorksPage from "@/pages/manage/works";
 import ProfilePage from "@/pages/profile";
 import SignupPage from "@/pages/signup";
 import QaWorkPage from "@/pages/work/qa";
+import Popup from "@/pages/work/qa/popup";
 import { ReactNode } from "react";
 
 // TODO:
@@ -64,6 +65,11 @@ const ObjectRoute: Record<TProtected, TRoutes> = {
       label: "회원가입",
       path: "/signup",
       element: <SignupPage />,
+    },
+    QA_WORK_POPUP: {
+      label: "정보 입력 팝업",
+      path: "/work/qa/popup",
+      element: <Popup />,
     },
   },
 } as const;

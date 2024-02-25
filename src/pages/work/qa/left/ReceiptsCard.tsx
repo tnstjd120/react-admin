@@ -4,6 +4,7 @@ import {
   AccordionProps,
   AccordionSummary,
   Box,
+  Button,
   Chip,
   Divider,
   ImageList,
@@ -135,8 +136,15 @@ const ReceiptsCard = () => {
     setQaData(response.data.qaDataLists);
   };
 
+  const openPopup = () => {
+    const url = window.location.origin + "/work/qa/popup";
+    window.open(url, "popup", "width=600, height=600");
+  };
+
   return (
     <ReceiptsCardContainer>
+      <Button onClick={openPopup}>open</Button>
+
       <Tabs value={tabValue} onChange={handleChangeTab}>
         <Tab label="미완료 건" sx={{ flex: 1 }} />
         <Tab label="완료 건" sx={{ flex: 1 }} />
