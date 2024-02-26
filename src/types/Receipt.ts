@@ -1,4 +1,4 @@
-export interface Receipt {
+export interface IReceipt {
   receiptId: number;
   rcpNo: string;
   receptionDate: string;

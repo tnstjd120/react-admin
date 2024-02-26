@@ -1,38 +1,27 @@
-import { IImage } from "@/types/Image";
-import { IMdcs } from "@/types/Mdcs";
-import { IQaData } from "@/types/QaData";
 import { IReceipt } from "@/types/Receipt";
-import { Range } from "react-date-range";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { IQaWorkStore } from "./useQaWorkStore";
 
-export interface IQaWorkStore {
-  dateRange: Range;
-  setDateRange: (dateRange: Range) => void;
-  receiptsByDate: Record<string, IReceipt[]>;
-  setReceiptsByDate: (newReceipts: Record<string, IReceipt[]>) => void;
-  currentReceipt: IReceipt | null;
-  setCurrentReceipt: (newCurrentReceipt: IReceipt) => void;
-  images: IImage[];
-  setImages: (newImages: IImage[]) => void;
-  currentImage: IImage | null;
-  setCurrentImage: (newCurrentImage: IImage) => void;
-  mdcs: IMdcs[];
-  setMdcs: (newMdcs: IMdcs[]) => void;
-  qaData: IQaData[];
-  setQaData: (newQaData: IQaData[]) => void;
-  withImage: boolean;
-  setWithImage: (withImage: boolean) => void;
-  mappedColors: string[];
-}
+interface IQaWorkPersistStore
+  extends Pick<
+    IQaWorkStore,
+    | "currentReceipt"
+    | "setCurrentReceipt"
+    | "images"
+    | "setImages"
+    | "currentImage"
+    | "setCurrentImage"
+    | "mdcs"
+    | "setMdcs"
+    | "qaData"
+    | "setQaData"
+    | "mappedColors"
+  > {}
 
-export const useQaWorkStore = create(
-  persist<IQaWorkStore>(
+export const useQaWorkPersistStore = create(
+  persist<IQaWorkPersistStore>(
     (set) => ({
-      dateRange: { startDate: new Date(), endDate: new Date() },
-      setDateRange: (dateRange) => set({ dateRange }),
-      receiptsByDate: {},
-      setReceiptsByDate: (receiptsByDate) => set({ receiptsByDate }),
       currentReceipt: null,
       setCurrentReceipt: (currentReceipt) => set({ currentReceipt }),
       images: [],
@@ -43,8 +32,6 @@ export const useQaWorkStore = create(
       setMdcs: (mdcs) => set({ mdcs }),
       qaData: [],
       setQaData: (qaData) => set({ qaData }),
-      withImage: true,
-      setWithImage: (withImage) => set({ withImage }),
       mappedColors: [
         "#f65b46",
         "#7863b2",
@@ -109,7 +96,7 @@ export const useQaWorkStore = create(
       ],
     }),
     {
-      name: "qaWorkStore",
+      name: "qaWorkStorage",
       getStorage: () => localStorage,
     }
   )

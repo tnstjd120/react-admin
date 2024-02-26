@@ -3,7 +3,7 @@ import CustomDateRange from "@/components/form/CustomDateRange";
 import { useQaWorkStore } from "@/store/qaWork/useQaWorkStore";
 
 const TopBar = () => {
-  const { withImage, setWithImage, setDateRange } = useQaWorkStore(
+  const { withImage, setWithImage, dateRange, setDateRange } = useQaWorkStore(
     (state) => state
   );
 
@@ -18,6 +18,7 @@ const TopBar = () => {
       }}
     >
       <CustomDateRange
+        defaultDateRange={dateRange}
         onChangeEndDateRange={(dateRange) => setDateRange(dateRange)}
       />
 

@@ -5,7 +5,7 @@ import WorksPage from "@/pages/manage/works";
 import ProfilePage from "@/pages/profile";
 import SignupPage from "@/pages/signup";
 import QaWorkPage from "@/pages/work/qa";
-import Popup from "@/pages/work/qa/popup";
+import MappingPopup from "@/pages/work/qa/mappingPopup";
 import { ReactNode } from "react";
 
 // TODO:
@@ -69,7 +69,7 @@ const ObjectRoute: Record<TProtected, TRoutes> = {
     QA_WORK_POPUP: {
       label: "정보 입력 팝업",
       path: "/work/qa/popup",
-      element: <Popup />,
+      element: <MappingPopup />,
     },
   },
 } as const;

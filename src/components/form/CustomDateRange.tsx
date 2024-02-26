@@ -6,17 +6,19 @@ import { ko } from "date-fns/locale";
 import dayjs from "dayjs";
 
 type TCustomDateRange = {
+  defaultDateRange?: Range;
   onChangeDateRange?: (dateRange: Range) => void;
   onChangeEndDateRange?: (dateRange: Range) => void;
 };
 
 const CustomDateRange = ({
+  defaultDateRange,
   onChangeDateRange,
   onChangeEndDateRange,
 }: TCustomDateRange) => {
   const [dateRange, setDateRange] = useState<Range>({
-    startDate: new Date(),
-    endDate: new Date(),
+    startDate: defaultDateRange?.startDate || new Date(),
+    endDate: defaultDateRange?.endDate || new Date(),
     key: "selection",
   });
   const [minDate, setMinDate] = useState<Date | undefined>(undefined);

@@ -39,7 +39,7 @@ import { api } from "@/api/axios";
 import { API_PATH } from "@/api/API_PATH";
 import dayjs from "dayjs";
 import Loading from "@/components/common/Loading";
-import { AccountTreeRounded, SchemaOutlined } from "@mui/icons-material";
+import { useQaWorkPersistStore } from "@/store/qaWork/useQaWorkPersistStore";
 
 const ReceiptsCard = () => {
   const theme = useTheme();
@@ -55,8 +55,8 @@ const ReceiptsCard = () => {
     setImages,
     currentImage,
     setCurrentImage,
-    qaData,
     setQaData,
+    setMdcs,
   } = useQaWorkStore((state) => state);
 
   const [expanded, setExpanded] = useState<number | false>(false);
@@ -74,10 +74,6 @@ const ReceiptsCard = () => {
     getReceipts();
     setExpanded(false);
   }, [dateRange, tabValue]);
-
-  useEffect(() => {
-    if (currentImage) getQaData(currentImage?.imageId);
-  }, [currentImage]);
 
   const getReceipts = async () => {
     const { PATH, METHOD } =
@@ -101,13 +97,35 @@ const ReceiptsCard = () => {
   };
 
   const handleClickReceipt = (receiptId: number) => {
-    setCurrentReceipt(
-      Object.values(receiptsByDate)
-        .flat(1)
-        .filter((receipt) => receipt.receiptId === receiptId)[0]
-    );
+    if (currentReceipt?.receiptId !== receiptId) {
+      setCurrentReceipt(
+        Object.values(receiptsByDate)
+          .flat(1)
+          .filter((receipt) => receipt.receiptId === receiptId)[0]
+      );
+      getMdcs(receiptId);
+      getImages(receiptId);
+    }
+  };
 
-    if (currentReceipt?.receiptId !== receiptId) getImages(receiptId);
+  const handleClickImage = (imageId: number) => {
+    if (currentImage?.imageId !== imageId) {
+      setCurrentImage(images.filter((image) => image.imageId === imageId)[0]);
+      getQaData(imageId);
+    }
+  };
+
+  const getMdcs = async (receiptId: number) => {
+    const { PATH, METHOD } = API_PATH.QA.MDCS_GET;
+
+    const response = await api(PATH, {
+      method: METHOD.method,
+      params: {
+        receiptId: receiptId,
+      },
+    });
+
+    setMdcs(response.data.mdcsLists);
   };
 
   const getImages = async (receiptId: number) => {
@@ -218,7 +236,7 @@ const ReceiptsCard = () => {
                                 },
                               },
                             }}
-                            onClick={() => setCurrentImage(image)}
+                            onClick={() => handleClickImage(image.imageId)}
                           >
                             {image.isMapping && !image.isMultiMapping ? (
                               <MappedChip
@@ -333,7 +351,7 @@ const ReceiptsCard = () => {
                                 },
                               },
                             }}
-                            onClick={() => setCurrentImage(image)}
+                            onClick={() => handleClickImage(image.imageId)}
                           >
                             <Stack
                               bgcolor={
