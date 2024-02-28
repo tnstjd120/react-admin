@@ -1,4 +1,4 @@
-import { Card, FormControlLabel, Switch } from "@mui/material";
+import { Button, Card, FormControlLabel, Stack, Switch } from "@mui/material";
 import CustomDateRange from "@/components/form/CustomDateRange";
 import { useQaWorkStore } from "@/store/qaWork/useQaWorkStore";
 
@@ -22,16 +22,21 @@ const TopBar = () => {
         onChangeEndDateRange={(dateRange) => setDateRange(dateRange)}
       />
 
-      <FormControlLabel
-        control={
-          <Switch
-            checked={withImage}
-            onChange={() => setWithImage(!withImage)}
-          />
-        }
-        label="With image"
-        labelPlacement="start"
-      />
+      <Stack direction="row" gap={2}>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={withImage}
+              onChange={() => setWithImage(!withImage)}
+            />
+          }
+          label="With image"
+          labelPlacement="start"
+        />
+
+        <Button type="submit">QA데이터 저장</Button>
+        <Button>롯데 전송</Button>
+      </Stack>
     </Card>
   );
 };

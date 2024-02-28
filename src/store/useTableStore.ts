@@ -35,7 +35,7 @@ export const useTableStore = create<IUseTableStore>((set) => ({
   search: "",
   loading: false,
   setRows: (rows) => set({ rows }),
-  setCopyRows: (rows) => set({ rows }),
+  setCopyRows: (copyRows) => set({ copyRows }),
   setSelected: (selected) => set({ selected }),
   setOrder: (order) => set({ order }),
   setOrderBy: (orderBy) => set({ orderBy }),

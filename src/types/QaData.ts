@@ -19,4 +19,5 @@ export interface IQaData {
   total_price: number;
   all_selfpay: number;
   non_benefit: number;
+  classOfMedicalExpense: "01" | "02";
 }

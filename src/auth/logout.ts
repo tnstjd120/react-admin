@@ -1,9 +1,7 @@
-import { removeCookie } from "@/utils/cookie";
+import { removeAllCookies } from "@/utils/cookie";
 
 export const logout = () => {
-  removeCookie("accessToken");
-  removeCookie("refreshToken");
-  removeCookie("userId");
+  removeAllCookies();
 
   window.location.replace("/login");
 };

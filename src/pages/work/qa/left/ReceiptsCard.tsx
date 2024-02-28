@@ -19,14 +19,9 @@ import {
   useTheme,
 } from "@mui/material";
 import { useQaWorkStore } from "@/store/qaWork/useQaWorkStore";
-import {
-  IconChevronDown,
-  IconSitemap,
-  IconTournament,
-} from "@tabler/icons-react";
+import { IconChevronDown, IconSitemap } from "@tabler/icons-react";
 import {
   Fragment,
-  ReactElement,
   ReactNode,
   SyntheticEvent,
   useEffect,
@@ -39,7 +34,6 @@ import { api } from "@/api/axios";
 import { API_PATH } from "@/api/API_PATH";
 import dayjs from "dayjs";
 import Loading from "@/components/common/Loading";
-import { useQaWorkPersistStore } from "@/store/qaWork/useQaWorkPersistStore";
 
 const ReceiptsCard = () => {
   const theme = useTheme();
@@ -59,10 +53,12 @@ const ReceiptsCard = () => {
     setMdcs,
   } = useQaWorkStore((state) => state);
 
-  const [expanded, setExpanded] = useState<number | false>(false);
+  const [expanded, setExpanded] = useState<number | false>(
+    currentReceipt?.receiptId || false
+  );
   const handleChangeReceipt =
-    (value: number) => (event: SyntheticEvent, isExpanded: boolean) => {
-      setExpanded(isExpanded ? value : false);
+    (receiptId: number) => (event: SyntheticEvent, isExpanded: boolean) => {
+      setExpanded(isExpanded ? receiptId : false);
     };
 
   const [tabValue, setTabValue] = useState(0);
@@ -72,7 +68,8 @@ const ReceiptsCard = () => {
 
   useEffect(() => {
     getReceipts();
-    setExpanded(false);
+
+    if (!currentReceipt?.receiptId) setExpanded(false);
   }, [dateRange, tabValue]);
 
   const getReceipts = async () => {
@@ -94,25 +91,6 @@ const ReceiptsCard = () => {
         ? response.data.inCompleteReceiptLists
         : response.data.completeReceiptLists
     );
-  };
-
-  const handleClickReceipt = (receiptId: number) => {
-    if (currentReceipt?.receiptId !== receiptId) {
-      setCurrentReceipt(
-        Object.values(receiptsByDate)
-          .flat(1)
-          .filter((receipt) => receipt.receiptId === receiptId)[0]
-      );
-      getMdcs(receiptId);
-      getImages(receiptId);
-    }
-  };
-
-  const handleClickImage = (imageId: number) => {
-    if (currentImage?.imageId !== imageId) {
-      setCurrentImage(images.filter((image) => image.imageId === imageId)[0]);
-      getQaData(imageId);
-    }
   };
 
   const getMdcs = async (receiptId: number) => {
@@ -154,6 +132,25 @@ const ReceiptsCard = () => {
     setQaData(response.data.qaDataLists);
   };
 
+  const handleClickReceipt = (receiptId: number) => {
+    if (currentReceipt?.receiptId !== receiptId) {
+      setCurrentReceipt(
+        Object.values(receiptsByDate)
+          .flat(1)
+          .filter((receipt) => receipt.receiptId === receiptId)[0]
+      );
+      getMdcs(receiptId);
+      getImages(receiptId);
+    }
+  };
+
+  const handleClickImage = (imageId: number) => {
+    if (currentImage?.imageId !== imageId) {
+      setCurrentImage(images.filter((image) => image.imageId === imageId)[0]);
+      getQaData(imageId);
+    }
+  };
+
   const openPopup = () => {
     const url = window.location.origin + "/work/qa/popup";
     window.open(url, "popup", "width=600, height=600");
@@ -161,8 +158,6 @@ const ReceiptsCard = () => {
 
   return (
     <ReceiptsCardContainer>
-      <Button onClick={openPopup}>open</Button>
-
       <Tabs value={tabValue} onChange={handleChangeTab}>
         <Tab label="미완료 건" sx={{ flex: 1 }} />
         <Tab label="완료 건" sx={{ flex: 1 }} />
@@ -370,7 +365,6 @@ const ReceiptsCard = () => {
                                 <MappedChip
                                   label={image.clmInfoSeqNo[0]}
                                   mappedColor={mappedColors[j]}
-                                  position="absolute"
                                 />
                               ) : image.isMapping && image.isMultiMapping ? (
                                 <MappedChip

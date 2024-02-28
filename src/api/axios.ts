@@ -42,8 +42,6 @@ api.interceptors.response.use(
       removeCookie("accessToken");
       removeCookie("refreshToken");
 
-      console.log("silentResponse => ", silentResponse);
-
       const { accessToken, refreshToken } =
         silentResponse.data as UserSilentRefreshResponse;
 

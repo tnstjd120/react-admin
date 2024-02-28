@@ -1,11 +1,10 @@
-import { useQaWorkPersistStore } from "@/store/qaWork/useQaWorkPersistStore";
-import { IQaWorkStore, useQaWorkStore } from "@/store/qaWork/useQaWorkStore";
+import { IQaWorkStore } from "@/store/qaWork/useQaWorkStore";
 import { IImage } from "@/types/Image";
 import { IMdcs } from "@/types/Mdcs";
 import { IQaData } from "@/types/QaData";
 import { IReceipt } from "@/types/Receipt";
 import { isEqual } from "lodash";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 interface QaWorkStoreOnlyData
   extends Omit<
@@ -27,33 +26,7 @@ const MappingPopup = () => {
   const [mdcs, setMdcs] = useState<IMdcs[]>([]);
   const [qaData, setQaData] = useState<IQaData[]>([]);
 
-  // useEffect(() => {
-  //   console.log("currentReceipt", currentReceipt);
-  // }, [currentReceipt]);
-
-  // useEffect(() => {
-  //   console.log("images", images);
-  // }, [images]);
-
-  // useEffect(() => {
-  //   console.log("currentImage", currentImage);
-  // }, [currentImage]);
-
-  // useEffect(() => {
-  //   console.log("mdcs", mdcs);
-  // }, [mdcs]);
-
-  // useEffect(() => {
-  //   console.log("qaData", qaData);
-  // }, [qaData]);
-
   useEffect(() => {
-    const qaWorkStore = JSON.parse(
-      localStorage.getItem("qaWorkStore") as string
-    );
-
-    updateStates(qaWorkStore.state);
-
     const onSyncQaWorkStore = (event: StorageEvent) => {
       if (event.key === "qaWorkStore") {
         const newData = JSON.parse(event.newValue as string);
@@ -70,35 +43,29 @@ const MappingPopup = () => {
   }, []);
 
   const updateStates = (newData: QaWorkStoreOnlyData) => {
-    if (
-      newData.currentReceipt &&
-      !isEqual(newData.currentReceipt, currentReceipt)
-    ) {
-      console.log("currentReceipt Changed");
-      setCurrentReceipt(newData.currentReceipt);
-    }
+    setCurrentReceipt((prevData) => {
+      return isEqual(newData.currentReceipt, prevData)
+        ? prevData
+        : newData.currentReceipt;
+    });
 
-    if (newData.images && !isEqual(newData.images, images)) {
-      console.log("images Changed");
-      setImages(newData.images);
-    }
+    setImages((prevData) => {
+      return isEqual(newData.images, prevData) ? prevData : newData.images;
+    });
 
-    if (newData.currentImage && !isEqual(newData.currentImage, currentImage)) {
-      console.log("currentImage Changed");
-      setCurrentImage(newData.currentImage);
-    }
+    setCurrentImage((prevData) => {
+      return isEqual(newData.currentImage, prevData)
+        ? prevData
+        : newData.currentImage;
+    });
 
-    if (newData.qaData && !isEqual(newData.qaData, qaData)) {
-      console.log("qaData Changed");
-      setQaData(newData.qaData);
-    }
+    setMdcs((prevData) => {
+      return isEqual(newData.mdcs, prevData) ? prevData : newData.mdcs;
+    });
 
-    if (newData.mdcs && !isEqual(newData.mdcs, mdcs)) {
-      console.log("mdcs Changed");
-      setMdcs(newData.mdcs);
-    }
-
-    console.log("------------------------------------------------------------");
+    setQaData((prevData) => {
+      return isEqual(newData.qaData, prevData) ? prevData : newData.qaData;
+    });
   };
 
   return <div></div>;

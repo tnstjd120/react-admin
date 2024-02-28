@@ -17,6 +17,7 @@ export interface HeadCellType {
   label: string | React.ReactNode;
   numeric: boolean;
   useSortable: boolean;
+  width?: string | number;
 }
 
 type Props = {
@@ -32,8 +33,16 @@ const CustomTableHead = ({
   isCheckedHead = false,
   isDragHead = false,
 }: Props) => {
-  const { selected, order, setOrder, orderBy, setOrderBy, rows, setSelected } =
-    useTableStore((state) => state);
+  const {
+    selected,
+    order,
+    setOrder,
+    orderBy,
+    setOrderBy,
+    rows,
+    copyRows,
+    setSelected,
+  } = useTableStore((state) => state);
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const popOverOpen = Boolean(anchorEl);
@@ -93,6 +102,7 @@ const CustomTableHead = ({
             align={headCell.numeric ? "right" : "left"}
             sortDirection={orderBy === headCell.id ? order : false}
             sx={{ padding: "2px 8px" }}
+            width={headCell.width ? headCell.width : "auto"}
           >
             <Stack direction="row">
               {headCell.useSortable ? (
@@ -103,20 +113,6 @@ const CustomTableHead = ({
                 >
                   <Stack>
                     <Typography variant="caption">{headCell.label}</Typography>
-
-                    {["total_price", "all_selfpay", "non_benefit"].includes(
-                      headCell.id
-                    ) && (
-                      <Typography variant="caption" fontWeight="bold">
-                        {formatNumberWithComma(
-                          rows.reduce((acc, cur) => {
-                            return (acc += formatNumberWithUncomma(
-                              String(cur[headCell.id])
-                            ));
-                          }, 0)
-                        )}
-                      </Typography>
-                    )}
                   </Stack>
                 </TableSortLabel>
               ) : (
@@ -128,7 +124,8 @@ const CustomTableHead = ({
                   ) && (
                     <Typography variant="caption" fontWeight="bold">
                       {formatNumberWithComma(
-                        rows.reduce((acc, cur) => {
+                        copyRows.reduce((acc, cur) => {
+                          console.log("cur => ", cur);
                           return (acc += formatNumberWithUncomma(
                             String(cur[headCell.id])
                           ));
