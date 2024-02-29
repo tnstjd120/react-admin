@@ -4,22 +4,22 @@ export type Order = "asc" | "desc";
 
 export interface IUseTableStore {
   selected: string[];
-  setSelected: (selectedRows: string[]) => void;
   order: Order;
-  setOrder: (order: Order) => void;
   orderBy: string;
-  setOrderBy: (columnId: string) => void;
   page: number;
-  setPage: (page: number) => void;
   rowsPerPage: number;
-  setRowsPerPage: (rowsPerPage: number) => void;
   search: string;
-  setSearch: (query: string) => void;
   loading: boolean;
-  setLoading: (loading: boolean) => void;
   rows: any[];
-  setRows: (rows: any[]) => void;
   copyRows: any[];
+  setSelected: (selectedRows: string[]) => void;
+  setOrder: (order: Order) => void;
+  setOrderBy: (columnId: string) => void;
+  setPage: (page: number) => void;
+  setRowsPerPage: (rowsPerPage: number) => void;
+  setSearch: (query: string) => void;
+  setLoading: (loading: boolean) => void;
+  setRows: (rows: any[]) => void;
   setCopyRows: (rows: any[]) => void;
   initializeTable: (initializeRows: any[]) => void;
 }

@@ -21,7 +21,7 @@ import dayjs from "dayjs";
 import { ChangeEvent, MouseEvent, useState } from "react";
 import { IconDotsVertical } from "@tabler/icons-react";
 import { UserInfoResponse } from "@/types/User";
-import { Order } from "@/components/table/TableContext";
+import { Order } from "@/store/useTableStore";
 import CustomTableSkeleton from "@/components/table/CustomTableSkeleton";
 import { API_PATH } from "@/api/API_PATH";
 import { api } from "@/api/axios";

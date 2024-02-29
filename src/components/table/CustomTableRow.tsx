@@ -2,8 +2,6 @@ import {
   Avatar,
   Badge,
   Box,
-  Checkbox,
-  Chip,
   IconButton,
   Menu,
   MenuProps,
@@ -20,7 +18,7 @@ import dayjs from "dayjs";
 import { ChangeEvent, MouseEvent, useEffect, useState } from "react";
 import { IconDotsVertical } from "@tabler/icons-react";
 import { UserInfoResponse } from "@/types/User";
-import { Order } from "./TableContext";
+import { Order } from "@/store/useTableStore";
 import CustomTableSkeleton from "./CustomTableSkeleton";
 import { API_PATH } from "@/api/API_PATH";
 import { api } from "@/api/axios";

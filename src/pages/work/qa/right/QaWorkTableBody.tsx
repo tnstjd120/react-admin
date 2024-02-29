@@ -21,6 +21,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import NumberCommaTextField from "./NumberCommaTextField";
 import { SearchOutlined } from "@mui/icons-material";
 import NumberFloatTextField from "./NumberFloatTextField";
+import { useQaWorkStore } from "@/store/qaWork/useQaWorkStore";
 
 interface IQaDataWithValidations extends IQaData {
   validations: { [key: string]: boolean };
@@ -29,7 +30,7 @@ interface IQaDataWithValidations extends IQaData {
 const QaWorkTableBody = () => {
   const theme = useTheme();
 
-  const { copyRows, setCopyRows, selected, setSelected } = useTableStore(
+  const { rows, copyRows, setCopyRows, selected, setSelected } = useTableStore(
     (state) => state
   );
 
@@ -49,7 +50,7 @@ const QaWorkTableBody = () => {
     });
 
     setCopyRows(initializeFormData);
-  }, []);
+  }, [rows]);
 
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
@@ -101,7 +102,6 @@ const QaWorkTableBody = () => {
   };
 
   const validationCheck = (row: IQaDataWithValidations, name: string) => {
-    console.log("row => ", row);
     return row?.validations?.[name] ? false : true;
   };
 
@@ -291,9 +291,19 @@ const QaWorkTableBody = () => {
                           <NumberCommaTextField
                             name="total_price"
                             value={row.total_price}
-                            onInputChange={(event, newValue) =>
-                              handleInputChange(event, row.qaDataId, newValue)
-                            }
+                            onInputChange={(event, newValue) => {
+                              console.log(
+                                "evnet.target.value",
+                                event.target.value
+                              );
+                              console.log("newValue", newValue);
+
+                              return handleInputChange(
+                                event,
+                                row.qaDataId,
+                                newValue
+                              );
+                            }}
                           />
                         </SmallPaddingTableCell>
 

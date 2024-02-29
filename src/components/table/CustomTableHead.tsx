@@ -125,7 +125,6 @@ const CustomTableHead = ({
                     <Typography variant="caption" fontWeight="bold">
                       {formatNumberWithComma(
                         copyRows.reduce((acc, cur) => {
-                          console.log("cur => ", cur);
                           return (acc += formatNumberWithUncomma(
                             String(cur[headCell.id])
                           ));
