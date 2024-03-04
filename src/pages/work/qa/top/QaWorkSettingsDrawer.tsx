@@ -1,11 +1,13 @@
 import Scrollbar from "@/components/common/Scrollbar";
 import { CustomFormLabel } from "@/components/form/CustomFormLabel";
+import { useQaWorkStore } from "@/store/qaWork/useQaWorkStore";
 import {
   Box,
   Divider,
   Drawer,
   Grid,
   IconButton,
+  Switch,
   Typography,
 } from "@mui/material";
 import { IconX } from "@tabler/icons-react";
@@ -17,6 +19,8 @@ type Props = {
 };
 
 const QaWorkDrawerSettingsDrawer = ({ open, onToggle }: Props) => {
+  const { withImage, setWithImage } = useQaWorkStore((state) => state);
+
   const handleClose: MouseEventHandler<HTMLElement> = (event) => {
     event.stopPropagation();
     onToggle(false);
@@ -49,12 +53,21 @@ const QaWorkDrawerSettingsDrawer = ({ open, onToggle }: Props) => {
       <Scrollbar sx={{ height: "calc(100vh - 64px)", minWidth: "100%" }}>
         <Box p={3} pt={0}>
           <Grid container>
-            <Grid item xs={12} display="flex" alignItems="center">
-              <CustomFormLabel htmlFor="userName" sx={{ mt: 0 }}>
-                이름
-              </CustomFormLabel>
+            <Grid item xs={12} display="flex" alignItems="center" pb={3}>
+              <Grid item xs={3}>
+                <Grid>
+                  <CustomFormLabel htmlFor="userIsUse" textAlign="center">
+                    썸네일 포함하기
+                  </CustomFormLabel>
+                </Grid>
+                <Grid textAlign="center">
+                  <Switch
+                    checked={withImage}
+                    onChange={() => setWithImage(!withImage)}
+                  />
+                </Grid>
+              </Grid>
             </Grid>
-            <Grid item xs={12}></Grid>
           </Grid>
         </Box>
       </Scrollbar>

@@ -5,9 +5,12 @@ import { ProtectedRoute } from "./routes/ProtectedRoute";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import ObjectRoute from "./routes/ObjectRoute";
 import { ThemeSettings } from "./utils/theme/Theme";
+import { useLoadingStore } from "./store/useLoadingStore";
+import Loading from "./components/common/Loading";
 
 function App() {
   const theme = ThemeSettings();
+  const isLoading = useLoadingStore((state) => state.isLoading);
 
   return (
     <ThemeProvider theme={theme}>
@@ -23,6 +26,8 @@ function App() {
           <Route key={key} path={value.path} element={value.element} />
         ))}
       </Routes>
+
+      {isLoading && <Loading fixed />}
     </ThemeProvider>
   );
 }

@@ -13,9 +13,7 @@ import QaWorkDrawerSettingsDrawer from "./QaWorkSettingsDrawer";
 import { useState } from "react";
 
 const TopBar = () => {
-  const { withImage, setWithImage, dateRange, setDateRange } = useQaWorkStore(
-    (state) => state
-  );
+  const { dateRange, setDateRange } = useQaWorkStore((state) => state);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -36,17 +34,6 @@ const TopBar = () => {
         />
 
         <Stack direction="row" gap={2}>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={withImage}
-                onChange={() => setWithImage(!withImage)}
-              />
-            }
-            label="With image"
-            labelPlacement="start"
-          />
-
           <Button type="submit">QA데이터 저장</Button>
           <Button>롯데 전송</Button>
 

@@ -18,11 +18,13 @@ export interface HeadCellType {
   numeric: boolean;
   useSortable: boolean;
   width?: string | number;
+  bold?: boolean;
 }
 
 type Props = {
   headCells: readonly HeadCellType[];
   mainKey: string;
+  paddingSize?: "small" | "medium";
   isCheckedHead?: boolean;
   isDragHead?: boolean;
 };
@@ -30,6 +32,7 @@ type Props = {
 const CustomTableHead = ({
   headCells,
   mainKey,
+  paddingSize = "medium",
   isCheckedHead = false,
   isDragHead = false,
 }: Props) => {
@@ -101,7 +104,9 @@ const CustomTableHead = ({
             key={headCell.id}
             align={headCell.numeric ? "right" : "left"}
             sortDirection={orderBy === headCell.id ? order : false}
-            sx={{ padding: "2px 8px" }}
+            sx={{
+              padding: paddingSize === "small" ? "2px 8px" : "16px",
+            }}
             width={headCell.width ? headCell.width : "auto"}
           >
             <Stack direction="row">
@@ -112,12 +117,22 @@ const CustomTableHead = ({
                   onClick={createSortHandler(headCell.id)}
                 >
                   <Stack>
-                    <Typography variant="caption">{headCell.label}</Typography>
+                    <Typography
+                      variant="caption"
+                      fontWeight={headCell.bold ? "bold" : "normal"}
+                    >
+                      {headCell.label}
+                    </Typography>
                   </Stack>
                 </TableSortLabel>
               ) : (
                 <Stack>
-                  <Typography variant="caption">{headCell.label}</Typography>
+                  <Typography
+                    variant="caption"
+                    fontWeight={headCell.bold ? "bold" : "normal"}
+                  >
+                    {headCell.label}
+                  </Typography>
 
                   {["total_price", "all_selfpay", "non_benefit"].includes(
                     headCell.id

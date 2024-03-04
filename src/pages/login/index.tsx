@@ -3,8 +3,14 @@ import { styled } from "@mui/system";
 
 import LoginForm from "./LoginForm";
 import Logo from "@/components/common/Logo";
+import { useEffect } from "react";
+import { removeAllCookies } from "@/utils/cookie";
 
 const LoginPage = () => {
+  useEffect(() => {
+    removeAllCookies();
+  }, []);
+
   return (
     <LoginWrapper>
       <Grid justifyContent="center" spacing={0} container>

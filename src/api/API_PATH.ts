@@ -120,10 +120,15 @@ export const API_PATH = {
       METHOD: { method: "POST" },
       PATH: "/api/qa/restoreImage",
     },
-    EDI_GET: {
-      // EDI 리스트 조회
+    EDI_BY_CODE_GET: {
+      // EDI 코드로 EDI 리스트 조회
       METHOD: { method: "GET" },
-      PATH: "/api/qa/ediTest",
+      PATH: "/api/qa/ediSearchCode",
+    },
+    EDI_BY_NAME_GET: {
+      // EDI 명칭으로 EDI 리스트 조회
+      METHOD: { method: "GET" },
+      PATH: "/api/qa/ediSearchName",
     },
   },
 } as const;

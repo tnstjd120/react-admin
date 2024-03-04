@@ -19,22 +19,24 @@ const QaWorkPage = () => {
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} noValidate>
-      <Stack sx={{ height: "calc(100vh - 90px)" }} spacing={2}>
-        <TopBar />
+    <>
+      <Box component="form" onSubmit={handleSubmit} noValidate>
+        <Stack sx={{ height: "calc(100vh - 90px)" }} spacing={2}>
+          <TopBar />
 
-        <Stack
-          direction="row"
-          maxHeight="calc(100% - 76px)"
-          spacing={2}
-          flex={1}
-        >
-          <ReceiptsCard />
+          <Stack
+            direction="row"
+            maxHeight="calc(100% - 76px)"
+            spacing={2}
+            flex={1}
+          >
+            <ReceiptsCard />
 
-          <RightCard />
+            <RightCard />
+          </Stack>
         </Stack>
-      </Stack>
-    </Box>
+      </Box>
+    </>
   );
 };
 

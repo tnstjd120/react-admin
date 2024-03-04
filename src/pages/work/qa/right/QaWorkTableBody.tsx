@@ -1,7 +1,10 @@
 import {
+  Box,
+  Grid,
   IconButton,
   InputAdornment,
   MenuItem,
+  Modal,
   Select,
   SelectChangeEvent,
   Stack,
@@ -9,6 +12,7 @@ import {
   TableCell,
   TableRow,
   TextField,
+  Typography,
   styled,
   useTheme,
 } from "@mui/material";
@@ -19,9 +23,12 @@ import { useTableStore } from "@/store/useTableStore";
 import CustomTableSkeleton from "@/components/table/CustomTableSkeleton";
 import { ChangeEvent, useEffect, useState } from "react";
 import NumberCommaTextField from "./NumberCommaTextField";
-import { SearchOutlined } from "@mui/icons-material";
 import NumberFloatTextField from "./NumberFloatTextField";
-import { useQaWorkStore } from "@/store/qaWork/useQaWorkStore";
+import { validationRoles } from "./validationQaDataObject";
+import { api } from "@/api/axios";
+import { API_PATH } from "@/api/API_PATH";
+import { useLoadingStore } from "@/store/useLoadingStore";
+import EdiSearchModal from "./EdiSearchModal";
 
 interface IQaDataWithValidations extends IQaData {
   validations: { [key: string]: boolean };
@@ -30,11 +37,20 @@ interface IQaDataWithValidations extends IQaData {
 const QaWorkTableBody = () => {
   const theme = useTheme();
 
-  const { rows, copyRows, setCopyRows, selected, setSelected } = useTableStore(
+  const setIsLoading = useLoadingStore((state) => state.setIsLoading);
+  const { rows, copyRows, setCopyRows, selected } = useTableStore(
     (state) => state
   );
+  const [openModal, setOpenModal] = useState(false);
+  const [focusQaDataId, setFocusQaDataId] = useState<number | string>("");
 
-  // const [formData, setFormData] = useState<IQaDataWithValidations[]>([]);
+  const handleModalOpen = () => {
+    setOpenModal(true);
+  };
+
+  const handleModalClose = () => {
+    setOpenModal(false);
+  };
 
   useEffect(() => {
     const initializeFormData = copyRows.map((row, index) => {
@@ -54,24 +70,41 @@ const QaWorkTableBody = () => {
 
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
-  const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected: string[] = [];
+  const getEdiSearchByCode = async (row: IQaDataWithValidations) => {
+    setIsLoading(true);
 
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
+    const { PATH, METHOD } = API_PATH.QA.EDI_BY_CODE_GET;
+
+    try {
+      const response = await api.get(PATH, {
+        method: METHOD.method,
+        params: {
+          ediCode: row.ediCode,
+        },
+      });
+
+      const updateCopyRows = copyRows.map((copyRow) => {
+        if (copyRow.qaDataId === row.qaDataId)
+          return {
+            ...copyRow,
+            ediName: response.data.ediName,
+            ediCode: response.data.ediCode,
+          };
+        return row;
+      });
+
+      if (!response.data.ediName) {
+        handleModalOpen();
+        setFocusQaDataId(row.qaDataId);
+      }
+
+      setCopyRows(updateCopyRows);
+      setIsLoading(false);
+
+      console.log("response => ", response);
+    } catch {
+      setIsLoading(false);
     }
-
-    setSelected(newSelected);
   };
 
   const handleInputChange = (
@@ -82,6 +115,8 @@ const QaWorkTableBody = () => {
     CustomValue?: string
   ) => {
     const { name, value } = event.target;
+
+    if (!validationRoles[name](value)) return;
 
     const updateFormData = copyRows.map((row) => {
       if (row.qaDataId === qaDataId) {
@@ -228,18 +263,10 @@ const QaWorkTableBody = () => {
                             name="ediCode"
                             value={row.ediCode}
                             required
-                            InputProps={{
-                              endAdornment: (
-                                <InputAdornment position="end">
-                                  <IconButton sx={{ p: 0 }}>
-                                    <SearchOutlined />
-                                  </IconButton>
-                                </InputAdornment>
-                              ),
-                            }}
                             onChange={(event) =>
                               handleInputChange(event, row.qaDataId)
                             }
+                            onBlur={() => getEdiSearchByCode(row)}
                           />
                         </SmallPaddingTableCell>
 
@@ -248,6 +275,7 @@ const QaWorkTableBody = () => {
                             size="small"
                             name="ediName"
                             value={row.ediName}
+                            disabled
                             required
                             onChange={(event) =>
                               handleInputChange(event, row.qaDataId)
@@ -384,6 +412,12 @@ const QaWorkTableBody = () => {
           <CustomTableSkeleton rowsCount={5} />
         </TableBody>
       )}
+
+      <EdiSearchModal
+        openModal={openModal}
+        handleModalClose={handleModalClose}
+        qaDataId={focusQaDataId}
+      />
     </>
   );
 };

@@ -23,6 +23,8 @@ export interface IQaWorkStore {
   setQaData: (newQaData: IQaData[]) => void;
   withImage: boolean;
   setWithImage: (withImage: boolean) => void;
+  isLoading: boolean;
+  setIsLoading: (isLoading: boolean) => void;
   mappedColors: string[];
 }
 
@@ -45,6 +47,8 @@ export const useQaWorkStore = create(
       setQaData: (qaData) => set({ qaData }),
       withImage: true,
       setWithImage: (withImage) => set({ withImage }),
+      isLoading: false,
+      setIsLoading: (isLoading) => set({ isLoading }),
       mappedColors: [
         "#f65b46",
         "#7863b2",

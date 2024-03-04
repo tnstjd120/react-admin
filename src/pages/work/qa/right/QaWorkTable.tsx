@@ -162,6 +162,7 @@ const QaWorkTable = () => {
             <CustomTableHead
               headCells={headCells}
               mainKey="qaDataId"
+              paddingSize="small"
               isDragHead
             />
 
