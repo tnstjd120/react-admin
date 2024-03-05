@@ -1,10 +1,9 @@
 import CustomTableHead from "@/components/table/CustomTableHead";
 import {
   Box,
-  FormControl,
-  FormLabel,
   IconButton,
   Paper,
+  Stack,
   Table,
   TableContainer,
   Typography,
@@ -14,7 +13,8 @@ import { DragDropContext, OnDragEndResponder } from "@hello-pangea/dnd";
 import { useTableStore } from "@/store/useTableStore";
 import { useEffect } from "react";
 import { useQaWorkStore } from "@/store/qaWork/useQaWorkStore";
-import { IconDotsVertical } from "@tabler/icons-react";
+import { IconCopy, IconSquarePlus2 } from "@tabler/icons-react";
+import { IconTrash } from "@tabler/icons-react";
 
 export interface HeadCellType {
   id: string;
@@ -55,7 +55,7 @@ const QaWorkTable = () => {
       ),
       numeric: false,
       useSortable: false,
-      width: "90px",
+      width: "94px",
     },
     {
       id: "dateTo",
@@ -70,7 +70,7 @@ const QaWorkTable = () => {
       ),
       numeric: false,
       useSortable: false,
-      width: "90px",
+      width: "94px",
     },
     {
       id: "ediCode",
@@ -127,19 +127,28 @@ const QaWorkTable = () => {
     {
       id: "setting",
       label: (
-        <IconButton size="small">
-          <IconDotsVertical />
-        </IconButton>
+        <Stack direction="row">
+          <IconButton size="small" color="primary">
+            <IconSquarePlus2 />
+          </IconButton>
+
+          <IconButton size="small" color="primary">
+            <IconCopy />
+          </IconButton>
+
+          <IconButton size="small" color="primary">
+            <IconTrash />
+          </IconButton>
+        </Stack>
       ),
       numeric: false,
       useSortable: false,
+      width: "120px",
     },
   ];
 
   const { qaData } = useQaWorkStore((state) => state);
-  const { initializeTable, copyRows, setCopyRows } = useTableStore(
-    (state) => state
-  );
+  const { initializeTable, rows, setRows } = useTableStore((state) => state);
 
   useEffect(() => {
     initializeTable(qaData);
@@ -148,10 +157,10 @@ const QaWorkTable = () => {
   const handleDragEnd: OnDragEndResponder = (e) => {
     if (!e.destination) return;
 
-    let tempData = Array.from(copyRows);
+    let tempData = Array.from(rows);
     let [source_data] = tempData.splice(e.source.index, 1);
     tempData.splice(e.destination.index, 0, source_data);
-    setCopyRows(tempData);
+    setRows(tempData);
   };
 
   return (

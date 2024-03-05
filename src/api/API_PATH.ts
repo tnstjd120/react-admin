@@ -87,7 +87,7 @@ export const API_PATH = {
     },
     QA_DATA_POST: {
       // QA 데이터 생성/수정 (qaDataId ? 수정 : 생성)
-      METHOD: { method: "GET" },
+      METHOD: { method: "POST" },
       PATH: "/api/qa/qaData",
     },
     MDCS_GET: {

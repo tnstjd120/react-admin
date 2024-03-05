@@ -1,10 +1,6 @@
 import {
-  Box,
-  Grid,
   IconButton,
-  InputAdornment,
   MenuItem,
-  Modal,
   Select,
   SelectChangeEvent,
   Stack,
@@ -12,11 +8,15 @@ import {
   TableCell,
   TableRow,
   TextField,
-  Typography,
   styled,
   useTheme,
 } from "@mui/material";
-import { IconDotsVertical, IconDragDrop } from "@tabler/icons-react";
+import {
+  IconCopy,
+  IconDragDrop,
+  IconSquarePlus2,
+  IconTrash,
+} from "@tabler/icons-react";
 import { Draggable, Droppable } from "@hello-pangea/dnd";
 import { IQaData } from "@/types/QaData";
 import { useTableStore } from "@/store/useTableStore";
@@ -29,18 +29,48 @@ import { api } from "@/api/axios";
 import { API_PATH } from "@/api/API_PATH";
 import { useLoadingStore } from "@/store/useLoadingStore";
 import EdiSearchModal from "./EdiSearchModal";
+import { formatNumberWithUncomma } from "@/utils/comma";
+import { useQaWorkStore } from "@/store/qaWork/useQaWorkStore";
 
 interface IQaDataWithValidations extends IQaData {
   validations: { [key: string]: boolean };
 }
 
-const QaWorkTableBody = () => {
-  const theme = useTheme();
+const generateUniqueId = () => {
+  return `id-${new Date().getTime()}`;
+};
 
+const generateQaData = () => ({
+  qaDataId: generateUniqueId(),
+  imageId: 0,
+  imageName: "",
+  isMapping: false,
+  isMultiMapping: false,
+  clmInfoSeqNo: [],
+  dateFrom: "",
+  isStandardEdi: false,
+  treatmentCode: "",
+  treatment: "",
+  dateTo: "",
+  ediCode: "",
+  ediName: "",
+  inferenceEdiName: "",
+  price: 0,
+  cnt: 0,
+  term: 0,
+  total_price: 0,
+  all_selfpay: 0,
+  non_benefit: 0,
+  classOfMedicalExpense: "01",
+  validations: {},
+});
+
+const QaWorkTableBody = () => {
   const setIsLoading = useLoadingStore((state) => state.setIsLoading);
-  const { rows, copyRows, setCopyRows, selected } = useTableStore(
-    (state) => state
-  );
+  const { rows, setRows, selected } = useTableStore((state) => state);
+
+  const { qaData, setQaData } = useQaWorkStore((state) => state);
+
   const [openModal, setOpenModal] = useState(false);
   const [focusQaDataId, setFocusQaDataId] = useState<number | string>("");
 
@@ -53,24 +83,24 @@ const QaWorkTableBody = () => {
   };
 
   useEffect(() => {
-    const initializeFormData = copyRows.map((row, index) => {
+    const initializeFormData = rows.map((row) => {
       const initializeValidations = Object.keys(row).reduce((acc, key) => {
         return { ...acc, [key]: true };
       }, {});
 
       return {
         ...row,
-        index: index,
         validations: initializeValidations,
       };
     });
 
-    setCopyRows(initializeFormData);
-  }, [rows]);
+    setRows(initializeFormData);
+  }, [qaData]);
 
-  const isSelected = (name: string) => selected.indexOf(name) !== -1;
-
-  const getEdiSearchByCode = async (row: IQaDataWithValidations) => {
+  const getEdiSearchByCode = async (
+    qaDataId: number | string,
+    ediCode: string
+  ) => {
     setIsLoading(true);
 
     const { PATH, METHOD } = API_PATH.QA.EDI_BY_CODE_GET;
@@ -79,14 +109,14 @@ const QaWorkTableBody = () => {
       const response = await api.get(PATH, {
         method: METHOD.method,
         params: {
-          ediCode: row.ediCode,
+          ediCode: ediCode,
         },
       });
 
-      const updateCopyRows = copyRows.map((copyRow) => {
-        if (copyRow.qaDataId === row.qaDataId)
+      const updateCopyRows = rows.map((row) => {
+        if (row.qaDataId === qaDataId)
           return {
-            ...copyRow,
+            ...row,
             ediName: response.data.ediName,
             ediCode: response.data.ediCode,
           };
@@ -95,13 +125,11 @@ const QaWorkTableBody = () => {
 
       if (!response.data.ediName) {
         handleModalOpen();
-        setFocusQaDataId(row.qaDataId);
+        setFocusQaDataId(qaDataId);
       }
 
-      setCopyRows(updateCopyRows);
+      setRows(updateCopyRows);
       setIsLoading(false);
-
-      console.log("response => ", response);
     } catch {
       setIsLoading(false);
     }
@@ -111,21 +139,24 @@ const QaWorkTableBody = () => {
     event:
       | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
       | SelectChangeEvent<"01" | "02">,
-    qaDataId: number,
+    qaDataId: number | string,
     CustomValue?: string
   ) => {
     const { name, value } = event.target;
 
     if (!validationRoles[name](value)) return;
 
-    const updateFormData = copyRows.map((row) => {
+    const updateFormData = rows.map((row) => {
       if (row.qaDataId === qaDataId) {
         const valid =
           "validity" in event.target ? event.target.validity.valid : true;
 
         return {
           ...row,
-          [name]: CustomValue ? CustomValue : value,
+          [name]: CustomValue || value,
+          total_price: ["price", "cnt", "term"].includes(name)
+            ? sumPrice([name, value], row)
+            : row.total_price,
           validations: { ...row.validations, [name]: valid },
         };
       }
@@ -133,22 +164,68 @@ const QaWorkTableBody = () => {
       return row;
     });
 
-    setCopyRows(updateFormData);
+    setRows(updateFormData);
+  };
+
+  const sumPrice = (target: [string, string], row: IQaDataWithValidations) => {
+    const [name, value] = target;
+
+    const price = name === "price" ? value : row.price;
+    const cnt = name === "cnt" ? value : row.cnt;
+    const term = name === "term" ? value : row.term;
+
+    return (
+      Number(formatNumberWithUncomma(String(price))) *
+      parseFloat(String(cnt)) *
+      parseFloat(String(term))
+    );
   };
 
   const validationCheck = (row: IQaDataWithValidations, name: string) => {
     return row?.validations?.[name] ? false : true;
   };
 
+  const handleClickAddRow = (
+    qaDataId: string | number,
+    copy: boolean = false
+  ) => {
+    const index = rows.findIndex((row) => row.qaDataId === qaDataId);
+    const newRow = copy
+      ? {
+          ...JSON.parse(JSON.stringify(rows[index])),
+          qaDataId: generateUniqueId(),
+        }
+      : generateQaData();
+
+    const updateRows = [
+      ...rows.slice(0, index + 1),
+      newRow,
+      ...rows.slice(index + 1),
+    ];
+
+    setRows(updateRows);
+  };
+
+  // const handleClickRemoveRow = (qaDataId: string | number) => {
+  //   setRows((currentRows: any) => {
+  //     const updatedRows = (currentRows as IQaData[]).filter(
+  //       (row) => row.qaDataId !== qaDataId
+  //     );
+  //     return updatedRows;
+  //   });
+  // };
+
+  useEffect(() => {
+    console.log("rows", rows);
+  }, [rows]);
+
   return (
     <>
-      {copyRows ? (
+      {rows ? (
         <Droppable droppableId="qaWorkDroppable">
           {(provider) => (
             <TableBody ref={provider.innerRef} {...provider.droppableProps}>
-              {copyRows.map((row: IQaDataWithValidations, index) => {
-                const isItemSelected = isSelected(String(row.qaDataId));
-
+              {rows.map((row: IQaDataWithValidations, index) => {
                 return (
                   <Draggable
                     key={row.qaDataId}
@@ -157,10 +234,8 @@ const QaWorkTableBody = () => {
                   >
                     {(provider) => (
                       <TableRow
-                        aria-checked={isItemSelected}
                         tabIndex={-1}
                         key={row.qaDataId}
-                        selected={isItemSelected}
                         ref={provider.innerRef}
                         {...provider.draggableProps}
                       >
@@ -266,7 +341,9 @@ const QaWorkTableBody = () => {
                             onChange={(event) =>
                               handleInputChange(event, row.qaDataId)
                             }
-                            onBlur={() => getEdiSearchByCode(row)}
+                            onBlur={() =>
+                              getEdiSearchByCode(row.qaDataId, row.ediCode)
+                            }
                           />
                         </SmallPaddingTableCell>
 
@@ -319,19 +396,9 @@ const QaWorkTableBody = () => {
                           <NumberCommaTextField
                             name="total_price"
                             value={row.total_price}
-                            onInputChange={(event, newValue) => {
-                              console.log(
-                                "evnet.target.value",
-                                event.target.value
-                              );
-                              console.log("newValue", newValue);
-
-                              return handleInputChange(
-                                event,
-                                row.qaDataId,
-                                newValue
-                              );
-                            }}
+                            onInputChange={(event, newValue) =>
+                              handleInputChange(event, row.qaDataId, newValue)
+                            }
                           />
                         </SmallPaddingTableCell>
 
@@ -390,10 +457,28 @@ const QaWorkTableBody = () => {
                           />
                         </SmallPaddingTableCell> */}
 
-                        <SmallPaddingTableCell>
-                          <Stack>
-                            <IconButton size="small">
-                              <IconDotsVertical />
+                        <SmallPaddingTableCell sx={{ padding: "2px 8px" }}>
+                          <Stack direction="row">
+                            <IconButton
+                              size="small"
+                              color="primary"
+                              onClick={() => handleClickAddRow(row.qaDataId)}
+                            >
+                              <IconSquarePlus2 />
+                            </IconButton>
+
+                            <IconButton
+                              size="small"
+                              color="primary"
+                              onClick={() =>
+                                handleClickAddRow(row.qaDataId, true)
+                              }
+                            >
+                              <IconCopy />
+                            </IconButton>
+
+                            <IconButton size="small" color="primary">
+                              <IconTrash />
                             </IconButton>
                           </Stack>
                         </SmallPaddingTableCell>

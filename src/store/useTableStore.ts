@@ -11,7 +11,6 @@ export interface IUseTableStore {
   search: string;
   loading: boolean;
   rows: any[];
-  copyRows: any[];
   setSelected: (selectedRows: string[]) => void;
   setOrder: (order: Order) => void;
   setOrderBy: (columnId: string) => void;
@@ -20,13 +19,11 @@ export interface IUseTableStore {
   setSearch: (query: string) => void;
   setLoading: (loading: boolean) => void;
   setRows: (rows: any[]) => void;
-  setCopyRows: (rows: any[]) => void;
   initializeTable: (initializeRows: any[]) => void;
 }
 
 export const useTableStore = create<IUseTableStore>((set) => ({
   rows: [],
-  copyRows: [],
   selected: [],
   order: "asc",
   orderBy: "",
@@ -35,7 +32,6 @@ export const useTableStore = create<IUseTableStore>((set) => ({
   search: "",
   loading: false,
   setRows: (rows) => set({ rows }),
-  setCopyRows: (copyRows) => set({ copyRows }),
   setSelected: (selected) => set({ selected }),
   setOrder: (order) => set({ order }),
   setOrderBy: (orderBy) => set({ orderBy }),
@@ -46,7 +42,6 @@ export const useTableStore = create<IUseTableStore>((set) => ({
   initializeTable: (initializeRows) =>
     set({
       rows: initializeRows,
-      copyRows: initializeRows,
       selected: [],
       order: "asc",
       orderBy: "",

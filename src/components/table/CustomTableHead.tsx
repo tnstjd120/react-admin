@@ -36,16 +36,8 @@ const CustomTableHead = ({
   isCheckedHead = false,
   isDragHead = false,
 }: Props) => {
-  const {
-    selected,
-    order,
-    setOrder,
-    orderBy,
-    setOrderBy,
-    rows,
-    copyRows,
-    setSelected,
-  } = useTableStore((state) => state);
+  const { selected, order, setOrder, orderBy, setOrderBy, rows, setSelected } =
+    useTableStore((state) => state);
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const popOverOpen = Boolean(anchorEl);
@@ -139,7 +131,7 @@ const CustomTableHead = ({
                   ) && (
                     <Typography variant="caption" fontWeight="bold">
                       {formatNumberWithComma(
-                        copyRows.reduce((acc, cur) => {
+                        rows.reduce((acc, cur) => {
                           return (acc += formatNumberWithUncomma(
                             String(cur[headCell.id])
                           ));

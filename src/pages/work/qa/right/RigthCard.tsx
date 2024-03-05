@@ -13,7 +13,7 @@ const RightCard = () => {
     <RightCardContainer>
       <ReflexContainer>
         <ReflexElement
-          flex={0.8}
+          flex={0.6}
           minSize={100}
           style={{ minWidth: "calc(100% - 41px)" }}
         >
@@ -37,7 +37,7 @@ const RightCard = () => {
 
         <CustomReflexSplitter />
 
-        <ReflexElement flex={0.2}>
+        <ReflexElement flex={0.4}>
           <QaWorkTable />
         </ReflexElement>
       </ReflexContainer>

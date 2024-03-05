@@ -1,6 +1,6 @@
 import { formatNumberWithComma, formatNumberWithUncomma } from "@/utils/comma";
 import { TextField, TextFieldProps } from "@mui/material";
-import { ChangeEvent, ChangeEventHandler, useState } from "react";
+import { ChangeEvent, ChangeEventHandler, useEffect, useState } from "react";
 
 type TNumberCommaTextField = {
   value: string | number;
@@ -16,8 +16,14 @@ const NumberCommaTextField = ({
   ...props
 }: TNumberCommaTextField) => {
   const [inputValue, setInputValue] = useState(
-    formatNumberWithComma(Number(value))
+    formatNumberWithComma(formatNumberWithUncomma(String(value)))
   );
+
+  useEffect(() => {
+    setInputValue(
+      formatNumberWithComma(formatNumberWithUncomma(String(value)))
+    );
+  }, [value]);
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     const newValue = formatNumberWithUncomma(event.target.value);
