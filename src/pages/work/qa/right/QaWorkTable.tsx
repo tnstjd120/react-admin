@@ -1,20 +1,28 @@
 import CustomTableHead from "@/components/table/CustomTableHead";
 import {
   Box,
+  Button,
+  Fab,
   IconButton,
   Paper,
   Stack,
   Table,
   TableContainer,
   Typography,
+  styled,
 } from "@mui/material";
 import QaWorkTableBody from "./QaWorkTableBody";
 import { DragDropContext, OnDragEndResponder } from "@hello-pangea/dnd";
 import { useTableStore } from "@/store/useTableStore";
 import { useEffect } from "react";
 import { useQaWorkStore } from "@/store/qaWork/useQaWorkStore";
-import { IconCopy, IconSquarePlus2 } from "@tabler/icons-react";
+import {
+  IconCopy,
+  IconDeviceFloppy,
+  IconSquarePlus2,
+} from "@tabler/icons-react";
 import { IconTrash } from "@tabler/icons-react";
+import { SaveAltRounded, SaveOutlined } from "@mui/icons-material";
 
 export interface HeadCellType {
   id: string;
@@ -24,6 +32,9 @@ export interface HeadCellType {
 }
 
 const QaWorkTable = () => {
+  const { qaData } = useQaWorkStore((state) => state);
+  const { initializeTable, rows, setRows } = useTableStore((state) => state);
+
   const headCells = [
     // {
     //   id: "treatmentCode",
@@ -84,7 +95,7 @@ const QaWorkTable = () => {
       label: "EDI 명칭",
       numeric: false,
       useSortable: false,
-      width: "140px",
+      width: "250px",
     },
     {
       id: "price",
@@ -128,15 +139,23 @@ const QaWorkTable = () => {
       id: "setting",
       label: (
         <Stack direction="row">
-          <IconButton size="small" color="primary">
+          <IconButton
+            size="small"
+            color="primary"
+            sx={{ opacity: 0, userSelect: "none", pointerEvents: "none" }}
+          >
             <IconSquarePlus2 />
           </IconButton>
 
-          <IconButton size="small" color="primary">
+          <IconButton
+            size="small"
+            color="primary"
+            sx={{ opacity: 0, userSelect: "none", pointerEvents: "none" }}
+          >
             <IconCopy />
           </IconButton>
 
-          <IconButton size="small" color="primary">
+          <IconButton size="small" color="primary" onClick={() => setRows([])}>
             <IconTrash />
           </IconButton>
         </Stack>
@@ -146,9 +165,6 @@ const QaWorkTable = () => {
       width: "120px",
     },
   ];
-
-  const { qaData } = useQaWorkStore((state) => state);
-  const { initializeTable, rows, setRows } = useTableStore((state) => state);
 
   useEffect(() => {
     initializeTable(qaData);
@@ -164,23 +180,27 @@ const QaWorkTable = () => {
   };
 
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
-      <Paper sx={{ minWidth: 1100, borderRadius: 0 }} variant="outlined">
-        <TableContainer sx={{ overflow: "visible" }}>
-          <Table stickyHeader>
-            <CustomTableHead
-              headCells={headCells}
-              mainKey="qaDataId"
-              paddingSize="small"
-              isDragHead
-            />
+    <Box flex={1}>
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <Paper sx={{ minWidth: 1100, borderRadius: 0 }} variant="outlined">
+          <TableContainer sx={{ overflow: "visible" }}>
+            <Table stickyHeader>
+              <CustomTableHead
+                headCells={headCells}
+                mainKey="qaDataId"
+                paddingSize="small"
+                isDragHead
+              />
 
-            <QaWorkTableBody />
-          </Table>
-        </TableContainer>
-      </Paper>
-    </DragDropContext>
+              <QaWorkTableBody />
+            </Table>
+          </TableContainer>
+        </Paper>
+      </DragDropContext>
+    </Box>
   );
 };
 
 export default QaWorkTable;
+
+const SaveButton = styled(Button)(({ theme }) => ({}));

@@ -4,7 +4,6 @@ import {
   AccordionProps,
   AccordionSummary,
   Box,
-  Button,
   Chip,
   Divider,
   ImageList,
@@ -34,6 +33,7 @@ import { api } from "@/api/axios";
 import { API_PATH } from "@/api/API_PATH";
 import dayjs from "dayjs";
 import Loading from "@/components/common/Loading";
+import { MappedChip } from "@/components/chip/MappedChip";
 
 const ReceiptsCard = () => {
   const theme = useTheme();
@@ -149,11 +149,6 @@ const ReceiptsCard = () => {
       setCurrentImage(images.filter((image) => image.imageId === imageId)[0]);
       getQaData(imageId);
     }
-  };
-
-  const openPopup = () => {
-    const url = window.location.origin + "/work/qa/popup";
-    window.open(url, "popup", "width=600, height=600");
   };
 
   return (
@@ -484,65 +479,5 @@ const CustomTabPanel = (props: ICustomTabPanel) => {
     <div role="tabpanel" hidden={value !== index}>
       {value === index && <Box>{children}</Box>}
     </div>
-  );
-};
-
-interface IMappedChip {
-  label?: ReactNode;
-  mappedColor: string;
-  multiMapped?: boolean;
-  position?: string;
-}
-const MappedChip = (props: IMappedChip) => {
-  const {
-    label,
-    mappedColor,
-    position = "static",
-    multiMapped = false,
-  } = props;
-  const theme = useTheme();
-
-  const multiMappedStyles = multiMapped
-    ? {
-        padding: 0,
-        width: "32px",
-        height: "32px",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        boxSizing: "border-box",
-
-        "& svg": {
-          color: theme.palette.text.primary,
-          width: 20,
-          height: 20,
-        },
-      }
-    : {};
-
-  return (
-    <Chip
-      variant="outlined"
-      label={label}
-      sx={{
-        position: position,
-        left: "10px",
-        top: "10px",
-        backgroundColor: theme.palette.background.paper,
-        borderWidth: "3px",
-        borderRadius: "4px",
-        borderColor: mappedColor,
-        color: theme.palette.text.primary,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: 10,
-
-        "& .MuiChip-label": {
-          padding: "0 10px",
-          ...multiMappedStyles,
-        },
-      }}
-    />
   );
 };

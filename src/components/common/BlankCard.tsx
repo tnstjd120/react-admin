@@ -21,7 +21,7 @@ const BlankCard = ({ children, className, sx }: Props) => {
         p: 0,
         border: !isCardShadow ? `1px solid ${borderColor}` : "none",
         position: "relative",
-        sx,
+        ...sx,
       }}
       className={className}
       elevation={isCardShadow ? 9 : 0}

@@ -108,7 +108,7 @@ const CustomTableHead = ({
                   direction={orderBy === headCell.id ? order : "asc"}
                   onClick={createSortHandler(headCell.id)}
                 >
-                  <Stack>
+                  <Stack justifyContent="flex-end">
                     <Typography
                       variant="caption"
                       fontWeight={headCell.bold ? "bold" : "normal"}

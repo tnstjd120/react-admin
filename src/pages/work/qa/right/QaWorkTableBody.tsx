@@ -1,4 +1,5 @@
 import {
+  Button,
   IconButton,
   MenuItem,
   Select,
@@ -20,7 +21,6 @@ import {
 import { Draggable, Droppable } from "@hello-pangea/dnd";
 import { IQaData } from "@/types/QaData";
 import { useTableStore } from "@/store/useTableStore";
-import CustomTableSkeleton from "@/components/table/CustomTableSkeleton";
 import { ChangeEvent, useEffect, useState } from "react";
 import NumberCommaTextField from "./NumberCommaTextField";
 import NumberFloatTextField from "./NumberFloatTextField";
@@ -31,6 +31,7 @@ import { useLoadingStore } from "@/store/useLoadingStore";
 import EdiSearchModal from "./EdiSearchModal";
 import { formatNumberWithUncomma } from "@/utils/comma";
 import { useQaWorkStore } from "@/store/qaWork/useQaWorkStore";
+import { isEqual } from "lodash";
 
 interface IQaDataWithValidations extends IQaData {
   validations: { [key: string]: boolean };
@@ -66,13 +67,36 @@ const generateQaData = () => ({
 });
 
 const QaWorkTableBody = () => {
+  const theme = useTheme();
   const setIsLoading = useLoadingStore((state) => state.setIsLoading);
-  const { rows, setRows, selected } = useTableStore((state) => state);
 
-  const { qaData, setQaData } = useQaWorkStore((state) => state);
+  const { rows, setRows } = useTableStore((state) => state);
+  const { qaData } = useQaWorkStore((state) => state);
 
   const [openModal, setOpenModal] = useState(false);
   const [focusQaDataId, setFocusQaDataId] = useState<number | string>("");
+
+  useEffect(() => {
+    const initializeRows = qaData.map((row) => {
+      const initializeValidations = Object.entries(row).reduce(
+        (acc, [key, value]) => {
+          if (!validationRoles?.[key]) return acc;
+          return { ...acc, [key]: validationRoles[key](String(value)) };
+        },
+        {}
+      );
+      return {
+        ...row,
+        validations: initializeValidations,
+      };
+    });
+    setRows(initializeRows);
+  }, [qaData]);
+
+  useEffect(() => {
+    if (rows.length)
+      console.log("rows 업데이트 됨:", JSON.parse(JSON.stringify(rows)));
+  }, [rows]);
 
   const handleModalOpen = () => {
     setOpenModal(true);
@@ -81,21 +105,6 @@ const QaWorkTableBody = () => {
   const handleModalClose = () => {
     setOpenModal(false);
   };
-
-  useEffect(() => {
-    const initializeFormData = rows.map((row) => {
-      const initializeValidations = Object.keys(row).reduce((acc, key) => {
-        return { ...acc, [key]: true };
-      }, {});
-
-      return {
-        ...row,
-        validations: initializeValidations,
-      };
-    });
-
-    setRows(initializeFormData);
-  }, [qaData]);
 
   const getEdiSearchByCode = async (
     qaDataId: number | string,
@@ -113,7 +122,7 @@ const QaWorkTableBody = () => {
         },
       });
 
-      const updateCopyRows = rows.map((row) => {
+      const updateRows = rows.map((row) => {
         if (row.qaDataId === qaDataId)
           return {
             ...row,
@@ -128,7 +137,7 @@ const QaWorkTableBody = () => {
         setFocusQaDataId(qaDataId);
       }
 
-      setRows(updateCopyRows);
+      setRows(updateRows);
       setIsLoading(false);
     } catch {
       setIsLoading(false);
@@ -143,28 +152,30 @@ const QaWorkTableBody = () => {
     CustomValue?: string
   ) => {
     const { name, value } = event.target;
+    const { validation, isValidationError } = validationRoles[name](value);
 
-    if (!validationRoles[name](value)) return;
+    if (!validation) return;
 
-    const updateFormData = rows.map((row) => {
+    const updateRows = rows.map((row) => {
       if (row.qaDataId === qaDataId) {
-        const valid =
-          "validity" in event.target ? event.target.validity.valid : true;
-
         return {
           ...row,
           [name]: CustomValue || value,
           total_price: ["price", "cnt", "term"].includes(name)
             ? sumPrice([name, value], row)
             : row.total_price,
-          validations: { ...row.validations, [name]: valid },
+          validations: {
+            ...row.validations,
+            [name]: isValidationError,
+          },
         };
       }
 
       return row;
     });
 
-    setRows(updateFormData);
+    console.log("handleInputChange");
+    setRows(updateRows);
   };
 
   const sumPrice = (target: [string, string], row: IQaDataWithValidations) => {
@@ -181,14 +192,12 @@ const QaWorkTableBody = () => {
     );
   };
 
-  const validationCheck = (row: IQaDataWithValidations, name: string) => {
-    return row?.validations?.[name] ? false : true;
-  };
-
   const handleClickAddRow = (
-    qaDataId: string | number,
+    qaDataId: string | number = 0,
     copy: boolean = false
   ) => {
+    if (qaDataId === 0) return setRows([generateQaData()]);
+
     const index = rows.findIndex((row) => row.qaDataId === qaDataId);
     const newRow = copy
       ? {
@@ -206,22 +215,23 @@ const QaWorkTableBody = () => {
     setRows(updateRows);
   };
 
-  // const handleClickRemoveRow = (qaDataId: string | number) => {
-  //   setRows((currentRows: any) => {
-  //     const updatedRows = (currentRows as IQaData[]).filter(
-  //       (row) => row.qaDataId !== qaDataId
-  //     );
-  //     return updatedRows;
-  //   });
-  // };
+  const handleClickRemoveRow = (qaDataId: string | number) => {
+    const updatedRows = rows.filter((row) => row.qaDataId !== qaDataId);
+    setRows(updatedRows);
+  };
 
-  useEffect(() => {
-    console.log("rows", rows);
-  }, [rows]);
+  const checkUnsavedRows = (row: any) => {
+    const { validations, ...rowOthers } = row;
+
+    return isEqual(
+      rowOthers,
+      qaData.find((data) => data.qaDataId === row.qaDataId)
+    );
+  };
 
   return (
     <>
-      {rows ? (
+      {rows.length ? (
         <Droppable droppableId="qaWorkDroppable">
           {(provider) => (
             <TableBody ref={provider.innerRef} {...provider.droppableProps}>
@@ -236,6 +246,11 @@ const QaWorkTableBody = () => {
                       <TableRow
                         tabIndex={-1}
                         key={row.qaDataId}
+                        sx={{
+                          backgroundColor: checkUnsavedRows(row)
+                            ? theme.palette.background.paper
+                            : theme.palette.error.light,
+                        }}
                         ref={provider.innerRef}
                         {...provider.draggableProps}
                       >
@@ -304,11 +319,10 @@ const QaWorkTableBody = () => {
                             size="small"
                             name="dateFrom"
                             value={row.dateFrom}
-                            error={validationCheck(row, "dateFrom")}
+                            error={row?.validations?.["dateFrom"]}
                             required
                             inputProps={{
                               maxLength: 8,
-                              pattern: "^[0-9]{8}$",
                             }}
                             onChange={(event) =>
                               handleInputChange(event, row.qaDataId)
@@ -321,10 +335,9 @@ const QaWorkTableBody = () => {
                             size="small"
                             name="dateTo"
                             value={row.dateTo}
-                            error={validationCheck(row, "dateTo")}
+                            error={row?.validations?.["dateTo"]}
                             inputProps={{
                               maxLength: 8,
-                              pattern: "^(\\d{8}|)$",
                             }}
                             onChange={(event) =>
                               handleInputChange(event, row.qaDataId)
@@ -477,7 +490,11 @@ const QaWorkTableBody = () => {
                               <IconCopy />
                             </IconButton>
 
-                            <IconButton size="small" color="primary">
+                            <IconButton
+                              size="small"
+                              color="primary"
+                              onClick={() => handleClickRemoveRow(row.qaDataId)}
+                            >
                               <IconTrash />
                             </IconButton>
                           </Stack>
@@ -494,7 +511,20 @@ const QaWorkTableBody = () => {
         </Droppable>
       ) : (
         <TableBody>
-          <CustomTableSkeleton rowsCount={5} />
+          <TableRow>
+            <TableCell colSpan={12}>
+              <Stack
+                direction="row"
+                justifyContent="center"
+                alignItems="center"
+                spacing={2}
+              >
+                <Button onClick={() => handleClickAddRow()}>
+                  데이터 추가하기
+                </Button>
+              </Stack>
+            </TableCell>
+          </TableRow>
         </TableBody>
       )}
 
@@ -514,5 +544,9 @@ const SmallPaddingTableCell = styled(TableCell)(({ theme }) => ({
 
   "& input": {
     padding: "8px !important",
+  },
+
+  "&  .MuiTextField-root": {
+    width: "100%",
   },
 }));

@@ -60,7 +60,7 @@ const modalStyles = {
 
 const EdiSearchModal = ({ openModal, handleModalClose, qaDataId }: Props) => {
   const setIsLoading = useLoadingStore((state) => state.setIsLoading);
-  const { copyRows, setCopyRows } = useTableStore((state) => state);
+  const { rows, setRows } = useTableStore((state) => state);
 
   const [tabValue, setTabValue] = useState<TEdiKey>("medicineLists");
   const [searchQuery, setSearchQuery] = useState("");
@@ -84,19 +84,19 @@ const EdiSearchModal = ({ openModal, handleModalClose, qaDataId }: Props) => {
   };
 
   const handleClick = (ediItem: TEdiItem) => {
-    const updateCopyRows = copyRows.map((copyRow) => {
-      if (copyRow.qaDataId === qaDataId) {
+    const updateRows = rows.map((row) => {
+      if (row.qaDataId === qaDataId) {
         return {
-          ...copyRow,
+          ...row,
           ediCode: ediItem.ediCode,
           ediName: ediItem.ediName,
         };
       }
 
-      return copyRow;
+      return row;
     });
 
-    setCopyRows(updateCopyRows);
+    setRows(updateRows);
     handleModalClose();
   };
 
