@@ -27,6 +27,7 @@ type Props = {
   paddingSize?: "small" | "medium";
   isCheckedHead?: boolean;
   isDragHead?: boolean;
+  readonly?: boolean;
 };
 
 const CustomTableHead = ({
@@ -35,6 +36,7 @@ const CustomTableHead = ({
   paddingSize = "medium",
   isCheckedHead = false,
   isDragHead = false,
+  readonly = false,
 }: Props) => {
   const { selected, order, setOrder, orderBy, setOrderBy, rows, setSelected } =
     useTableStore((state) => state);
@@ -52,7 +54,10 @@ const CustomTableHead = ({
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelecteds = rows.map((n: any) => n[mainKey]);
+      const newSelecteds = rows.map((n: any) => String(n[mainKey]));
+
+      console.log("newSelecteds => ", newSelecteds);
+
       setSelected(newSelecteds);
       return;
     }
@@ -76,9 +81,9 @@ const CustomTableHead = ({
   return (
     <TableHead>
       <TableRow>
-        {isDragHead && <TableCell padding="normal"></TableCell>}
+        {!readonly && isDragHead && <TableCell padding="normal"></TableCell>}
 
-        {isCheckedHead && (
+        {readonly ? (
           <TableCell padding="checkbox">
             <CustomCheckbox
               color="primary"
@@ -89,61 +94,76 @@ const CustomTableHead = ({
               }}
             />
           </TableCell>
+        ) : (
+          isCheckedHead && (
+            <TableCell padding="checkbox">
+              <CustomCheckbox
+                color="primary"
+                checked={rows.length > 0 && selected.length === rows.length}
+                onChange={handleSelectAllClick}
+                inputProps={{
+                  "aria-label": "전체 선택",
+                }}
+              />
+            </TableCell>
+          )
         )}
 
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
-            sortDirection={orderBy === headCell.id ? order : false}
-            sx={{
-              padding: paddingSize === "small" ? "2px 8px" : "16px",
-            }}
-            width={headCell.width ? headCell.width : "auto"}
-          >
-            <Stack direction="row">
-              {headCell.useSortable ? (
-                <TableSortLabel
-                  active={orderBy === headCell.id}
-                  direction={orderBy === headCell.id ? order : "asc"}
-                  onClick={createSortHandler(headCell.id)}
-                >
-                  <Stack justifyContent="flex-end">
+        {headCells.map((headCell) =>
+          readonly && headCell.id === "action" ? null : (
+            <TableCell
+              key={headCell.id}
+              align={headCell.numeric ? "right" : "left"}
+              sortDirection={orderBy === headCell.id ? order : false}
+              sx={{
+                padding: paddingSize === "small" ? "2px 8px" : "16px",
+              }}
+              width={headCell.width ? headCell.width : "auto"}
+            >
+              <Stack direction="row">
+                {headCell.useSortable ? (
+                  <TableSortLabel
+                    active={orderBy === headCell.id}
+                    direction={orderBy === headCell.id ? order : "asc"}
+                    onClick={createSortHandler(headCell.id)}
+                  >
+                    <Stack justifyContent="flex-end">
+                      <Typography
+                        variant="caption"
+                        fontWeight={headCell.bold ? "bold" : "normal"}
+                      >
+                        {headCell.label}
+                      </Typography>
+                    </Stack>
+                  </TableSortLabel>
+                ) : (
+                  <Stack>
                     <Typography
                       variant="caption"
                       fontWeight={headCell.bold ? "bold" : "normal"}
                     >
                       {headCell.label}
                     </Typography>
-                  </Stack>
-                </TableSortLabel>
-              ) : (
-                <Stack>
-                  <Typography
-                    variant="caption"
-                    fontWeight={headCell.bold ? "bold" : "normal"}
-                  >
-                    {headCell.label}
-                  </Typography>
 
-                  {["total_price", "all_selfpay", "non_benefit"].includes(
-                    headCell.id
-                  ) && (
-                    <Typography variant="caption" fontWeight="bold">
-                      {formatNumberWithComma(
-                        rows.reduce((acc, cur) => {
-                          return (acc += formatNumberWithUncomma(
-                            String(cur[headCell.id])
-                          ));
-                        }, 0)
-                      )}
-                    </Typography>
-                  )}
-                </Stack>
-              )}
-            </Stack>
-          </TableCell>
-        ))}
+                    {["total_price", "all_selfpay", "non_benefit"].includes(
+                      headCell.id
+                    ) && (
+                      <Typography variant="caption" fontWeight="bold">
+                        {formatNumberWithComma(
+                          rows.reduce((acc, cur) => {
+                            return (acc += formatNumberWithUncomma(
+                              String(cur[headCell.id])
+                            ));
+                          }, 0)
+                        )}
+                      </Typography>
+                    )}
+                  </Stack>
+                )}
+              </Stack>
+            </TableCell>
+          )
+        )}
       </TableRow>
 
       <Popover

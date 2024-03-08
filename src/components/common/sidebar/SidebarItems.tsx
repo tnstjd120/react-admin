@@ -6,7 +6,7 @@ import NavItem from "./NavItem";
 import NavCollapse from "./NavCollapse";
 import NavGroup from "./NavGroup/NavGroup";
 import { useLocation } from "react-router-dom";
-import { useStylesState } from "@/store/useStylesStore";
+import { useStylesStore } from "@/store/useStylesStore";
 
 const SidebarItems = () => {
   const location = useLocation();
@@ -14,7 +14,7 @@ const SidebarItems = () => {
   const pathWithoutLastPart = pathname.slice(0, pathname.lastIndexOf("/"));
   const lgUp = useMediaQuery((theme: any) => theme.breakpoints.up("lg"));
 
-  const { isCollapse, isSidebarHover, toggleMobileSidebar } = useStylesState(
+  const { isCollapse, isSidebarHover, toggleMobileSidebar } = useStylesStore(
     (state) => state
   );
 

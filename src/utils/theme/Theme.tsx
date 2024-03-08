@@ -8,7 +8,7 @@ import { DarkThemeColors } from "./DarkThemeColors";
 import { LightThemeColors } from "./LightThemeColors";
 import { baseDarkTheme, baselightTheme } from "./DefaultColors";
 import * as locales from "@mui/material/locale";
-import { useStylesState } from "@/store/useStylesStore";
+import { useStylesStore } from "@/store/useStylesStore";
 
 export const BuildTheme = (config: any = {}) => {
   const themeOptions = LightThemeColors.find(
@@ -17,7 +17,7 @@ export const BuildTheme = (config: any = {}) => {
   const darkthemeOptions = DarkThemeColors.find(
     (theme) => theme.name === config.theme
   );
-  const customizer = useStylesState((state) => state);
+  const customizer = useStylesStore((state) => state);
   const defaultTheme =
     customizer.activeMode === "dark" ? baseDarkTheme : baselightTheme;
   const defaultShadow =
@@ -45,8 +45,8 @@ export const BuildTheme = (config: any = {}) => {
 };
 
 const ThemeSettings = () => {
-  const activDir = useStylesState((state) => state.activeDir);
-  const activeTheme = useStylesState((state) => state.activeTheme);
+  const activDir = useStylesStore((state) => state.activeDir);
+  const activeTheme = useStylesStore((state) => state.activeTheme);
   const theme = BuildTheme({
     direction: activDir,
     theme: activeTheme,

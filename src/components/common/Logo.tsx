@@ -1,9 +1,9 @@
-import { useStylesState } from "@/store/useStylesStore";
+import { useStylesStore } from "@/store/useStylesStore";
 import { styled } from "@mui/material/styles";
 import { Link } from "react-router-dom";
 
 const Logo = () => {
-  const { TopbarHeight, isCollapse, activeMode } = useStylesState(
+  const { TopbarHeight, isCollapse, activeMode } = useStylesStore(
     (state) => state
   );
   const LinkStyled = styled(Link)(() => ({

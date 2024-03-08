@@ -9,12 +9,12 @@ import { IconMenu2 } from "@tabler/icons-react";
 import Notifications from "./Notification";
 import Profile from "./Profile";
 import ThemeToggle from "./ThemeToggle";
-import { useStylesState } from "@/store/useStylesStore";
+import { useStylesStore } from "@/store/useStylesStore";
 
 const Header = () => {
   const lgUp = useMediaQuery((theme: Theme) => theme.breakpoints.up("lg"));
 
-  const { TopbarHeight, toggleSidebar, toggleMobileSidebar } = useStylesState(
+  const { TopbarHeight, toggleSidebar, toggleMobileSidebar } = useStylesStore(
     (state) => state
   );
 

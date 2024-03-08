@@ -72,6 +72,10 @@ const ReceiptsCard = () => {
     if (!currentReceipt?.receiptId) setExpanded(false);
   }, [dateRange, tabValue]);
 
+  useEffect(() => {
+    getQaData(currentImage?.imageId || 0);
+  }, [currentImage]);
+
   const getReceipts = async () => {
     const { PATH, METHOD } =
       tabValue === 0

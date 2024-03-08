@@ -2,7 +2,6 @@ import CustomTableHead from "@/components/table/CustomTableHead";
 import {
   Box,
   Button,
-  Fab,
   IconButton,
   Paper,
   Stack,
@@ -16,13 +15,9 @@ import { DragDropContext, OnDragEndResponder } from "@hello-pangea/dnd";
 import { useTableStore } from "@/store/useTableStore";
 import { useEffect } from "react";
 import { useQaWorkStore } from "@/store/qaWork/useQaWorkStore";
-import {
-  IconCopy,
-  IconDeviceFloppy,
-  IconSquarePlus2,
-} from "@tabler/icons-react";
+import { IconCopy, IconSquarePlus2 } from "@tabler/icons-react";
 import { IconTrash } from "@tabler/icons-react";
-import { SaveAltRounded, SaveOutlined } from "@mui/icons-material";
+import { IQaData } from "@/types/QaData";
 
 export interface HeadCellType {
   id: string;
@@ -31,9 +26,23 @@ export interface HeadCellType {
   useSortable: boolean;
 }
 
-const QaWorkTable = () => {
-  const { qaData } = useQaWorkStore((state) => state);
+type Props = {
+  propQaData?: IQaData[];
+  readonly?: boolean;
+};
+
+const QaWorkTable = ({ propQaData, readonly }: Props) => {
+  const qaData = propQaData
+    ? propQaData
+    : useQaWorkStore((state) => state.qaData);
   const { initializeTable, rows, setRows } = useTableStore((state) => state);
+
+  useEffect(() => {
+    console.log(location.pathname);
+
+    console.log("qaData", qaData);
+    console.log("rows", rows);
+  }, [qaData]);
 
   const headCells = [
     // {
@@ -136,7 +145,7 @@ const QaWorkTable = () => {
     //   useSortable: false,
     // },
     {
-      id: "setting",
+      id: "action",
       label: (
         <Stack direction="row">
           <IconButton
@@ -190,9 +199,10 @@ const QaWorkTable = () => {
                 mainKey="qaDataId"
                 paddingSize="small"
                 isDragHead
+                readonly={readonly}
               />
 
-              <QaWorkTableBody />
+              <QaWorkTableBody propQaData={propQaData} readonly={readonly} />
             </Table>
           </TableContainer>
         </Paper>

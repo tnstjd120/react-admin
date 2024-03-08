@@ -1,17 +1,18 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
-export type ActiveModeType = "light" | "dark";
+export type TActiveMode = "light" | "dark";
 
-type ActionStateType = {
+type TActionStore = {
   hoverSidebar: (arg: boolean) => void;
   toggleSidebar: () => void;
   toggleMobileSidebar: () => void;
-  setActiveMode: (mode: ActiveModeType) => void;
+  setActiveMode: (mode: TActiveMode) => void;
 };
 
-interface StateType {
+interface IUseStylesStore {
   activeDir?: string | any;
-  activeMode?: ActiveModeType;
+  activeMode?: TActiveMode;
   activeTheme?: string;
   SidebarWidth?: number;
   MiniSidebarWidth?: number;
@@ -26,7 +27,7 @@ interface StateType {
   borderRadius?: number | any;
 }
 
-const initialState: StateType = {
+const initialStore: IUseStylesStore = {
   activeDir: "ltr",
   activeMode: "light",
   activeTheme: "BLUE_THEME",
@@ -43,18 +44,17 @@ const initialState: StateType = {
   borderRadius: 7,
 };
 
-export const useStylesState = create<StateType & ActionStateType>((set) => ({
-  ...initialState,
-  hoverSidebar: (arg: boolean) => set({ isSidebarHover: arg }),
-  toggleSidebar: () =>
-    set(({ isCollapse }) => {
-      console.log("useStylesState isCollapse => ", isCollapse);
-      return { isCollapse: !isCollapse };
+export const useStylesStore = create(
+  persist<IUseStylesStore & TActionStore>(
+    (set) => ({
+      ...initialStore,
+      hoverSidebar: (arg: boolean) => set({ isSidebarHover: arg }),
+      toggleSidebar: () =>
+        set(({ isCollapse }) => ({ isCollapse: !isCollapse })),
+      toggleMobileSidebar: () =>
+        set(({ isMobileSidebar }) => ({ isMobileSidebar: !isMobileSidebar })),
+      setActiveMode: (arg: TActiveMode) => set({ activeMode: arg }),
     }),
-  toggleMobileSidebar: () =>
-    set(({ isMobileSidebar }) => {
-      console.log("useStylesState isMobileSidebar => ", isMobileSidebar);
-      return { isMobileSidebar: !isMobileSidebar };
-    }),
-  setActiveMode: (arg: ActiveModeType) => set({ activeMode: arg }),
-}));
+    { name: "stylesByUserStore", getStorage: () => localStorage }
+  )
+);

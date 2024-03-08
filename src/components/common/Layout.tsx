@@ -2,14 +2,14 @@ import { Box, Container, Stack, useTheme } from "@mui/material";
 import { ReactNode } from "react";
 import Sidebar from "./sidebar/Sidebar";
 import Header from "./header/Header";
-import { useStylesState } from "@/store/useStylesStore";
+import { useStylesStore } from "@/store/useStylesStore";
 import { Outlet } from "react-router-dom";
 
 type Props = { children: ReactNode };
 
 const Layout = ({ children }: Props) => {
   const theme = useTheme();
-  const { isCollapse, isLayout, MiniSidebarWidth } = useStylesState.getState();
+  const { isCollapse, isLayout, MiniSidebarWidth } = useStylesStore.getState();
 
   return (
     <Stack direction="row" minHeight="100dvh" width="100%">

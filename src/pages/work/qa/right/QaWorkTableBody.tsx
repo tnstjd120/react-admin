@@ -9,6 +9,7 @@ import {
   TableCell,
   TableRow,
   TextField,
+  Typography,
   styled,
   useTheme,
 } from "@mui/material";
@@ -32,10 +33,16 @@ import EdiSearchModal from "./EdiSearchModal";
 import { formatNumberWithUncomma } from "@/utils/comma";
 import { useQaWorkStore } from "@/store/qaWork/useQaWorkStore";
 import { isEqual } from "lodash";
+import CustomCheckbox from "@/components/form/CustomCheckbox";
 
 interface IQaDataWithValidations extends IQaData {
   validations: { [key: string]: boolean };
 }
+
+type Props = {
+  propQaData?: IQaData[];
+  readonly?: boolean;
+};
 
 const generateUniqueId = () => {
   return `id-${new Date().getTime()}`;
@@ -66,12 +73,16 @@ const generateQaData = () => ({
   validations: {},
 });
 
-const QaWorkTableBody = () => {
+const QaWorkTableBody = ({ propQaData, readonly }: Props) => {
   const theme = useTheme();
   const setIsLoading = useLoadingStore((state) => state.setIsLoading);
 
-  const { rows, setRows } = useTableStore((state) => state);
-  const { qaData } = useQaWorkStore((state) => state);
+  const { rows, setRows, selected, setSelected } = useTableStore(
+    (state) => state
+  );
+  const qaData = propQaData
+    ? propQaData
+    : useQaWorkStore((state) => state.qaData);
 
   const [openModal, setOpenModal] = useState(false);
   const [focusQaDataId, setFocusQaDataId] = useState<number | string>("");
@@ -96,7 +107,9 @@ const QaWorkTableBody = () => {
   useEffect(() => {
     if (rows.length)
       console.log("rows 업데이트 됨:", JSON.parse(JSON.stringify(rows)));
-  }, [rows]);
+
+    console.log("selected => ", selected);
+  }, [rows, selected]);
 
   const handleModalOpen = () => {
     setOpenModal(true);
@@ -229,6 +242,28 @@ const QaWorkTableBody = () => {
     );
   };
 
+  const isSelected = (name: string) => selected.indexOf(name) !== -1;
+
+  const handleClickRow = (name: string) => {
+    const selectedIndex = selected.indexOf(name);
+    let newSelected: string[] = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, name);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1)
+      );
+    }
+
+    setSelected(newSelected);
+  };
+
   return (
     <>
       {rows.length ? (
@@ -236,6 +271,9 @@ const QaWorkTableBody = () => {
           {(provider) => (
             <TableBody ref={provider.innerRef} {...provider.droppableProps}>
               {rows.map((row: IQaDataWithValidations, index) => {
+                const isItemSelected = isSelected(String(row.qaDataId));
+                const labelId = `table-checkbox-${index}`;
+
                 return (
                   <Draggable
                     key={row.qaDataId}
@@ -251,18 +289,35 @@ const QaWorkTableBody = () => {
                             ? theme.palette.background.paper
                             : theme.palette.error.light,
                         }}
+                        selected={isItemSelected}
                         ref={provider.innerRef}
                         {...provider.draggableProps}
                       >
-                        <SmallPaddingTableCell {...provider.dragHandleProps}>
-                          <IconDragDrop />
-                        </SmallPaddingTableCell>
+                        {readonly ? (
+                          <SmallPaddingTableCell>
+                            <CustomCheckbox
+                              color="primary"
+                              checked={isItemSelected}
+                              onClick={() =>
+                                handleClickRow(String(row.qaDataId))
+                              }
+                              inputProps={{
+                                "aria-labelledby": labelId,
+                              }}
+                            />
+                          </SmallPaddingTableCell>
+                        ) : (
+                          <SmallPaddingTableCell {...provider.dragHandleProps}>
+                            <IconDragDrop />
+                          </SmallPaddingTableCell>
+                        )}
 
                         <SmallPaddingTableCell {...provider.dragHandleProps}>
                           <Select
                             name="classOfMedicalExpense"
                             value={row.classOfMedicalExpense}
                             size="small"
+                            disabled={readonly}
                             onChange={(event) =>
                               handleInputChange(event, row.qaDataId)
                             }
@@ -288,6 +343,7 @@ const QaWorkTableBody = () => {
                         {/* <SmallPaddingTableCell>
                           <TextField
                             size="small"
+                            disabled={readonly}
                             onChange={(event) =>
                               handleInputChange(
                                 row.qaDataId,
@@ -303,6 +359,7 @@ const QaWorkTableBody = () => {
                           <TextField
                             size="small"
                             disabled
+                            disabled={readonly}
                             onChange={(event) =>
                               handleInputChange(
                                 row.qaDataId,
@@ -319,11 +376,14 @@ const QaWorkTableBody = () => {
                             size="small"
                             name="dateFrom"
                             value={row.dateFrom}
-                            error={row?.validations?.["dateFrom"]}
+                            error={
+                              readonly ? false : row?.validations?.["dateFrom"]
+                            }
                             required
                             inputProps={{
                               maxLength: 8,
                             }}
+                            disabled={readonly}
                             onChange={(event) =>
                               handleInputChange(event, row.qaDataId)
                             }
@@ -335,10 +395,13 @@ const QaWorkTableBody = () => {
                             size="small"
                             name="dateTo"
                             value={row.dateTo}
-                            error={row?.validations?.["dateTo"]}
+                            error={
+                              readonly ? false : row?.validations?.["dateTo"]
+                            }
                             inputProps={{
                               maxLength: 8,
                             }}
+                            disabled={readonly}
                             onChange={(event) =>
                               handleInputChange(event, row.qaDataId)
                             }
@@ -351,6 +414,7 @@ const QaWorkTableBody = () => {
                             name="ediCode"
                             value={row.ediCode}
                             required
+                            disabled={readonly}
                             onChange={(event) =>
                               handleInputChange(event, row.qaDataId)
                             }
@@ -377,6 +441,7 @@ const QaWorkTableBody = () => {
                           <NumberCommaTextField
                             name="price"
                             value={row.price}
+                            disabled={readonly}
                             onInputChange={(event, newValue) =>
                               handleInputChange(event, row.qaDataId, newValue)
                             }
@@ -388,6 +453,7 @@ const QaWorkTableBody = () => {
                             size="small"
                             name="cnt"
                             value={row.cnt}
+                            disabled={readonly}
                             onInputChange={(event, newValue) =>
                               handleInputChange(event, row.qaDataId, newValue)
                             }
@@ -399,6 +465,7 @@ const QaWorkTableBody = () => {
                             size="small"
                             name="term"
                             value={row.term}
+                            disabled={readonly}
                             onInputChange={(event, newValue) =>
                               handleInputChange(event, row.qaDataId, newValue)
                             }
@@ -409,6 +476,7 @@ const QaWorkTableBody = () => {
                           <NumberCommaTextField
                             name="total_price"
                             value={row.total_price}
+                            disabled={readonly}
                             onInputChange={(event, newValue) =>
                               handleInputChange(event, row.qaDataId, newValue)
                             }
@@ -470,35 +538,39 @@ const QaWorkTableBody = () => {
                           />
                         </SmallPaddingTableCell> */}
 
-                        <SmallPaddingTableCell sx={{ padding: "2px 8px" }}>
-                          <Stack direction="row">
-                            <IconButton
-                              size="small"
-                              color="primary"
-                              onClick={() => handleClickAddRow(row.qaDataId)}
-                            >
-                              <IconSquarePlus2 />
-                            </IconButton>
+                        {!readonly && (
+                          <SmallPaddingTableCell sx={{ padding: "2px 8px" }}>
+                            <Stack direction="row">
+                              <IconButton
+                                size="small"
+                                color="primary"
+                                onClick={() => handleClickAddRow(row.qaDataId)}
+                              >
+                                <IconSquarePlus2 />
+                              </IconButton>
 
-                            <IconButton
-                              size="small"
-                              color="primary"
-                              onClick={() =>
-                                handleClickAddRow(row.qaDataId, true)
-                              }
-                            >
-                              <IconCopy />
-                            </IconButton>
+                              <IconButton
+                                size="small"
+                                color="primary"
+                                onClick={() =>
+                                  handleClickAddRow(row.qaDataId, true)
+                                }
+                              >
+                                <IconCopy />
+                              </IconButton>
 
-                            <IconButton
-                              size="small"
-                              color="primary"
-                              onClick={() => handleClickRemoveRow(row.qaDataId)}
-                            >
-                              <IconTrash />
-                            </IconButton>
-                          </Stack>
-                        </SmallPaddingTableCell>
+                              <IconButton
+                                size="small"
+                                color="primary"
+                                onClick={() =>
+                                  handleClickRemoveRow(row.qaDataId)
+                                }
+                              >
+                                <IconTrash />
+                              </IconButton>
+                            </Stack>
+                          </SmallPaddingTableCell>
+                        )}
                       </TableRow>
                     )}
                   </Draggable>
@@ -519,9 +591,13 @@ const QaWorkTableBody = () => {
                 alignItems="center"
                 spacing={2}
               >
-                <Button onClick={() => handleClickAddRow()}>
-                  데이터 추가하기
-                </Button>
+                {readonly ? (
+                  <Typography>데이터가 없습니다.</Typography>
+                ) : (
+                  <Button onClick={() => handleClickAddRow()}>
+                    데이터 추가하기
+                  </Button>
+                )}
               </Stack>
             </TableCell>
           </TableRow>

@@ -10,7 +10,7 @@ import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { styled, useTheme } from "@mui/material/styles";
 import { NavLink } from "react-router-dom";
-import { useStylesState } from "@/store/useStylesStore";
+import { useStylesStore } from "@/store/useStylesStore";
 
 type NavGroup = {
   [x: string]: any;
@@ -48,7 +48,7 @@ export default function NavItem({
   const Icon = item?.icon;
   const theme = useTheme();
 
-  const borderRadius = useStylesState((state) => state.borderRadius);
+  const borderRadius = useStylesStore((state) => state.borderRadius);
   const itemIcon =
     level > 1 ? (
       <Icon stroke={1.5} size="1rem" />

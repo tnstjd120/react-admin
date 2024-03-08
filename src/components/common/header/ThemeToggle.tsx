@@ -2,11 +2,11 @@ import { Button, ButtonGroup } from "@mui/material";
 
 import WbSunnyTwoToneIcon from "@mui/icons-material/WbSunnyTwoTone";
 import DarkModeTwoToneIcon from "@mui/icons-material/DarkModeTwoTone";
-import { ActiveModeType, useStylesState } from "@/store/useStylesStore";
+import { TActiveMode, useStylesStore } from "@/store/useStylesStore";
 
 const ThemeToggle = () => {
-  const { activeMode, setActiveMode } = useStylesState((state) => state);
-  const handleClick = (mode: ActiveModeType) => setActiveMode(mode);
+  const { activeMode, setActiveMode } = useStylesStore((state) => state);
+  const handleClick = (mode: TActiveMode) => setActiveMode(mode);
 
   return (
     <ButtonGroup

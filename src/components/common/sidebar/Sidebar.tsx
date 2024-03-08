@@ -4,9 +4,8 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import SidebarItems from "./SidebarItems";
 import { Profile } from "./SidebarProfile/Profile";
-import { useStylesState } from "@/store/useStylesStore";
+import { useStylesStore } from "@/store/useStylesStore";
 import Scrollbar from "../Scrollbar";
-import { useEffect } from "react";
 import Logo from "../Logo";
 
 const Sidebar = () => {
@@ -18,18 +17,11 @@ const Sidebar = () => {
     isSidebarHover,
     MiniSidebarWidth,
     SidebarWidth,
-    hoverSidebar,
     toggleMobileSidebar,
-  } = useStylesState((state) => state);
+  } = useStylesStore((state) => state);
 
   const toggleWidth =
     isCollapse && !isSidebarHover ? MiniSidebarWidth : SidebarWidth;
-
-  const onHoverEnter = () => {
-    if (isCollapse) hoverSidebar(true);
-  };
-
-  const onHoverLeave = () => hoverSidebar(false);
 
   if (lgUp) {
     return (
@@ -46,8 +38,6 @@ const Sidebar = () => {
         <Drawer
           anchor="left"
           open
-          onMouseEnter={onHoverEnter}
-          onMouseLeave={onHoverLeave}
           variant="permanent"
           PaperProps={{
             sx: {

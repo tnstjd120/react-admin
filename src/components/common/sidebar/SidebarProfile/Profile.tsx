@@ -1,5 +1,5 @@
 import { logout } from "@/auth/logout";
-import { useStylesState } from "@/store/useStylesStore";
+import { useStylesStore } from "@/store/useStylesStore";
 import { useUserStore } from "@/store/useUserStore";
 import {
   Box,
@@ -15,7 +15,7 @@ import { IconPower } from "@tabler/icons-react";
 export const Profile = () => {
   const lgUp = useMediaQuery((theme: Theme) => theme.breakpoints.up("lg"));
 
-  const { isCollapse, isSidebarHover } = useStylesState((state) => state);
+  const { isCollapse, isSidebarHover } = useStylesStore((state) => state);
   const me = useUserStore((state) => state.user);
 
   const hideMenu = lgUp ? isCollapse && !isSidebarHover : "";

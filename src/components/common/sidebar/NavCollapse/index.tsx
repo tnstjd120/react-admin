@@ -10,7 +10,7 @@ import { styled, useTheme } from "@mui/material/styles";
 import { isNull } from "lodash";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import { useLocation } from "react-router-dom";
-import { useStylesState } from "@/store/useStylesStore";
+import { useStylesStore } from "@/store/useStylesStore";
 
 type NavGroupProps = {
   [x: string]: any;
@@ -43,7 +43,7 @@ export default function NavCollapse({
   const Icon = menu?.icon;
   const theme = useTheme();
 
-  const borderRadius = useStylesState((state) => state.borderRadius);
+  const borderRadius = useStylesStore((state) => state.borderRadius);
 
   const location = useLocation();
   const pathname = location.pathname;
